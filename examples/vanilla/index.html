@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BetaHub Web Form</title>
+    <script type="module" src="../../dist/index.mjs"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body onload="bhwf.init()">
+    <form data-bhwf-project-id="pr-1972208695">
+      <h1>BetaHub Web Form</h1>
+
+      <label>Issue Description</label>
+      <textarea
+        data-bhwf-input="description"
+        placeholder="Enter your issue description. Min. 50 characters"
+      ></textarea>
+      <span data-bhwf-error-msg="description"></span>
+
+      <label>Steps to Reproduce</label>
+      <textarea data-bhwf-input="stepsToReproduce" placeholder="Steps to reproduce"></textarea>
+
+      <label>Attach Media</label>
+      <input type="file" data-bhwf-input="media" multiple />
+
+      <button data-bhwf-button="submit">Submit</button>
+
+      <div class="panel loading-panel">
+        <span class="loader"></span>
+      </div>
+
+      <div class="panel success-panel">
+        <h2>All done!</h2>
+        <p>Thank you for submitting your issue!</p>
+        <button data-bhwf-button="reset">Submit another issue</button>
+      </div>
+    </form>
+  </body>
+</html>
