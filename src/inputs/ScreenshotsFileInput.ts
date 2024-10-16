@@ -2,20 +2,15 @@ import { FileInput } from "./FileInput";
 
 export class ScreenshotsFileInput extends FileInput {
   constructor(formElement: HTMLElement) {
-    const element = formElement.querySelector(
-      '[data-bhwf-input="screenshots"]'
-    ) as HTMLInputElement | null;
-
-    const errorMsgElement = formElement.querySelector('[data-bhwf-error-msg="screenshots"]') as HTMLElement | null;
-
     const validator = (value: FileList | null) => {
       if (value) {
         for (let i = 0; i < value.length; i++) {
           const file = value[i];
           if (!file.type.startsWith("image/")) {
-            element?.classList.add('bhwf-error');
-            if (errorMsgElement) {
-              errorMsgElement.innerText = 'All files must be images';
+            this.element?.classList.add('bhwf-error');
+            this.dropZoneElement?.classList.add('bhwf-error');
+            if (this.errorMsgElement) {
+              this.errorMsgElement.innerText = 'All files must be images';
             }
             return false;
           }
@@ -25,12 +20,12 @@ export class ScreenshotsFileInput extends FileInput {
     };
 
     const onInput = () => {
-      element?.classList.remove('bhwf-error');
-      if (errorMsgElement) {
-        errorMsgElement.innerText = '';
+      this.element?.classList.remove('bhwf-error');
+      if (this.errorMsgElement) {
+        this.errorMsgElement.innerText = '';
       }
     }
 
-    super({ element, errorMsgElement, validator, onInput });
+    super({ name: 'screenshots', formElement, validator, onInput });
   }
 }

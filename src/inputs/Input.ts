@@ -5,16 +5,21 @@ export class Input {
   validator: ((value: string) => boolean) | null = null;
 
   constructor({
-    element = null,
-    errorMsgElement = null,
+    name,
+    formElement,
     validator,
     onInput,
   }: {
-    element?: HTMLInputElement | null;
-    errorMsgElement?: HTMLElement | null;
+    name: string;
+    formElement: HTMLElement;
     validator?: (value: string) => boolean;
     onInput?: (value: string) => void;
   }) {
+    const element = formElement.querySelector(
+      `[data-bhwf-input="${name}"]`
+    ) as HTMLInputElement | null;
+    const errorMsgElement = formElement.querySelector(`[data-bhwf-error-msg="${name}"]`) as HTMLElement | null;
+
     this.isDisabled = element === null;
     if (this.isDisabled) return;
 

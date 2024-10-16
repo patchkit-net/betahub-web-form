@@ -2,20 +2,15 @@ import { FileInput } from "./FileInput";
 
 export class VideosFileInput extends FileInput {
   constructor(formElement: HTMLElement) {
-    const element = formElement.querySelector(
-      '[data-bhwf-input="videos"]'
-    ) as HTMLInputElement | null;
-
-    const errorMsgElement = formElement.querySelector('[data-bhwf-error-msg="videos"]') as HTMLElement | null;
-
     const validator = (value: FileList | null) => {
       if (value) {
         for (let i = 0; i < value.length; i++) {
           const file = value[i];
           if (!file.type.startsWith("video/")) {
-            element?.classList.add('bhwf-error');
-            if (errorMsgElement) {
-              errorMsgElement.innerText = 'All files must be videos';
+            this.element?.classList.add('bhwf-error');
+            this.dropZoneElement?.classList.add('bhwf-error');
+            if (this.errorMsgElement) {
+              this.errorMsgElement.innerText = 'All files must be videos';
             }
             return false;
           }
@@ -25,12 +20,12 @@ export class VideosFileInput extends FileInput {
     };
 
     const onInput = () => {
-      element?.classList.remove('bhwf-error');
-      if (errorMsgElement) {
-        errorMsgElement.innerText = '';
+      this.element?.classList.remove('bhwf-error');
+      if (this.errorMsgElement) {
+        this.errorMsgElement.innerText = '';
       }
     }
 
-    super({ element, errorMsgElement, validator, onInput });
+    super({ name: 'videos', formElement, validator, onInput });
   }
 }

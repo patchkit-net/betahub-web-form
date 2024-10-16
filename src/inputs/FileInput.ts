@@ -2,30 +2,35 @@ export class FileInput {
   isDisabled: boolean = false;
   element: HTMLInputElement | null = null;
   errorMsgElement: HTMLElement | null = null;
+  dropZoneElement: HTMLElement | null = null;
   fileListElement: HTMLElement | null = null;
   validator: ((value: FileList | null) => boolean) | null = null;
 
   constructor({
-    element = null,
-    errorMsgElement = null,
-    dropZoneElement = null,
-    fileListElement = null,
+    formElement,
+    name,
     validator,
     onInput,
   }: {
-    element?: HTMLInputElement | null;
-    errorMsgElement?: HTMLElement | null;
-    dropZoneElement?: HTMLElement | null;
-    fileListElement?: HTMLElement | null;
+    formElement: HTMLElement;
+    name: string;
     validator?: (value: FileList | null) => boolean;
     onInput?: (value: FileList | null) => void;
   }) {
+    const element = formElement.querySelector(
+      `[data-bhwf-input="${name}"]`
+    ) as HTMLInputElement | null;
+    const errorMsgElement = formElement.querySelector(`[data-bhwf-error-msg="${name}"]`) as HTMLElement | null;
+    const dropZoneElement = formElement.querySelector(`[data-bhwf-drop-zone="${name}"]`) as HTMLElement | null;
+    const fileListElement = formElement.querySelector(`[data-bhwf-file-list="${name}"]`) as HTMLElement | null;
+
     this.isDisabled = element === null;
     if (this.isDisabled) return;
 
     this.element = element;
 
     this.errorMsgElement = errorMsgElement;
+    this.dropZoneElement = dropZoneElement;
     this.fileListElement = fileListElement;
     this.validator = validator || null;
 
@@ -101,6 +106,8 @@ export class FileInput {
             removeButton.addEventListener("click", () => {
                 selectedFiles.splice(i, 1);
                 updateFileList();
+                if (errorMsgElement) errorMsgElement.innerText = "";
+                if (dropZoneElement) dropZoneElement.classList.remove("bhwf-error");
             });
             li.appendChild(removeButton);
 

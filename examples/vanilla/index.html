@@ -78,8 +78,10 @@
       <textarea data-bhwf-input="stepsToReproduce" placeholder="Describe the steps leading to the issue"></textarea>
 
       <label>Screenshots</label>
-      <input type="file" data-bhwf-input="screenshots" multiple />
+      <input type="file" data-bhwf-input="screenshots" multiple accept="image/*" />
+      <div data-bhwf-drop-zone="screenshots">Drag & drop files here or click to browse</div>
       <span data-bhwf-error-msg="screenshots"></span>
+      <div data-bhwf-file-list="screenshots"></div>
 
       <label>Video Clips</label>
       <input type="file" data-bhwf-input="videos" multiple />

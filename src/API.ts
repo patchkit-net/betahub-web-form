@@ -1,6 +1,7 @@
 import { CreateNewIssueArgs, CreateNewIssueResponse } from "./types";
 
-const ENDPOINT = 'http://localhost';
+// const ENDPOINT = 'http://localhost';
+const ENDPOINT = 'https://app.betahub.io';
 
 export const createNewIssue = async ({
   projectId,
