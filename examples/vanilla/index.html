@@ -30,12 +30,12 @@
       <label>Issue Description</label>
       <textarea
         data-bhwf-input="description"
-        placeholder="Enter your issue description. Min. 50 characters"
+        placeholder="Describe your issue as detailed as possible"
       ></textarea>
       <span data-bhwf-error-msg="description"></span>
 
       <label>Steps to Reproduce</label>
-      <textarea data-bhwf-input="stepsToReproduce" placeholder="Steps to reproduce"></textarea>
+      <textarea data-bhwf-input="stepsToReproduce" placeholder="Describe the steps leading to the issue"></textarea>
 
       <label>Attach Media</label>
       <input type="file" data-bhwf-input="media" multiple />
@@ -67,21 +67,24 @@
       <label>Issue Description</label>
       <textarea
         data-bhwf-input="description"
-        placeholder="Enter your issue description. Min. 50 characters"
+        placeholder="Describe your issue as detailed as possible"
       ></textarea>
       <span data-bhwf-error-msg="description"></span>
 
       <label>Steps to Reproduce</label>
-      <textarea data-bhwf-input="stepsToReproduce" placeholder="Steps to reproduce"></textarea>
+      <textarea data-bhwf-input="stepsToReproduce" placeholder="Describe the steps leading to the issue"></textarea>
 
       <label>Screenshots</label>
       <input type="file" data-bhwf-input="screenshots" multiple />
+      <span data-bhwf-error-msg="screenshots"></span>
 
       <label>Video Clips</label>
       <input type="file" data-bhwf-input="videos" multiple />
+      <span data-bhwf-error-msg="videos"></span>
 
       <label>Log Files</label>
       <input type="file" data-bhwf-input="logs" multiple />
+      <span data-bhwf-error-msg="logs"></span>
 
       <button data-bhwf-button="submit">Submit</button>
 
@@ -93,6 +96,7 @@
         <h2>Something went wrong!</h2>
         <p>Your issue couldn't be sent right now</p>
         <button data-bhwf-button="submit">Try again</button>
+        <button data-bhwf-button="reset">Reset</button>
       </div>
 
       <div data-bhwf-modal="success">

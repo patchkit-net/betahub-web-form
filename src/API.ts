@@ -40,7 +40,7 @@ export const uploadScreenshot = async ({
   screenshot,
 }: {
   projectId: string;
-  issueId: string;
+  issueId: number;
   screenshot: Blob;
 }) => {
   const formData = new FormData();
@@ -72,7 +72,7 @@ export const uploadVideoClip = async ({
   videoClip,
 }: {
   projectId: string;
-  issueId: string;
+  issueId: number;
   videoClip: Blob;
 }) => {
   const formData = new FormData();
@@ -104,7 +104,7 @@ export const uploadLogFile = async ({
   logFile,
 }: {
   projectId: string;
-  issueId: string;
+  issueId: number;
   logFile: Blob;
 }) => {
   const formData = new FormData();
