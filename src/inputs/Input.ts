@@ -32,7 +32,7 @@ export class Input {
 
   validate = (): boolean => this.validator?.(this.getValue()) ?? true;
   getValue = (): string => (this.element !== null ? this.element.value : "");
-  setValue = (value: string) => {
-    if (this.element !== null) this.element.value = value;
+  reset = () => {
+    if (this.element !== null) this.element.value = "";
   };
 }

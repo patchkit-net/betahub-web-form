@@ -17,6 +17,9 @@
   --bhfw-modal-bg-color: #151515dd;
 
   --bhwf-error-color: #9d0101;
+
+  --bhwf-drag-over-color: #0056b3;
+  --bhwf-file-list-bg-color: #1a1a1a;
 }
 
 [data-bhwf-form].light {
@@ -35,6 +38,9 @@
   --bhfw-modal-bg-color: #fffd;
 
   --bhwf-error-color: #d80000;
+
+  --bhwf-drag-over-color: #0056b3;
+  --bhwf-file-list-bg-color: #ddd;
 }
 
 [data-bhwf-form] {
@@ -150,6 +156,62 @@
 }
 [data-bhwf-drop-zone].bhwf-error {
   border-color: var(--bhwf-error-color);
+}
+[data-bhwf-drop-zone].bhwf-drag-over {
+  border-color: var(--bhwf-drag-over-color);
+}
+
+[data-bhwf-file-list] ul {
+  list-style-type: none;
+  padding: 0;
+}
+[data-bhwf-file-list] li {
+  position: relative;
+  box-sizing: border-box;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  padding: 10px;
+  
+  font-size: 14px;
+  border-radius: var(--bhwf-radius);
+  background-color: var(--bhwf-file-list-bg-color);
+}
+[data-bhwf-file-list] li:hover .remove-button {
+  opacity: 1;
+  pointer-events: all;
+}
+[data-bhwf-file-list] .thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+  translate: -10px 0;
+
+  border-radius: var(--bhwf-radius);
+}
+[data-bhwf-file-list] .remove-button {
+  opacity: 0;
+  pointer-events: none;
+
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin-left: auto;
+  border: none;
+  border-radius: var(--bhwf-radius);
+  background-color: var(--bhwf-button-bg-color);
+  color: var(--bhwf-button-text-color);
+
+  transition: background-color var(--bhwf-transition), transform var(--bhwf-transition);
+}
+[data-bhwf-file-list] .remove-button:hover {
+  background-color: var(--bhwf-button-bg-color-hover);
+}
+[data-bhwf-file-list] .remove-button:active {
+  transform: scale(0.95);
 }
 
 .bhwf-loader {

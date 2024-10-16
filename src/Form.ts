@@ -7,6 +7,7 @@ import { FileInput } from "./inputs/FileInput";
 import { ScreenshotsFileInput } from "./inputs/ScreenshotsFileInput";
 import { VideosFileInput } from "./inputs/VideosFileInput";
 import { LogsFileInput } from "./inputs/LogsFileInput";
+import { MediaFileInput } from "./inputs/MediaFileInput";
 
 export class Form {
   projectId: string | null = null;
@@ -36,6 +37,7 @@ export class Form {
       screenshots: new ScreenshotsFileInput(this.formElement),
       videos: new VideosFileInput(this.formElement),
       logs: new LogsFileInput(this.formElement),
+      media: new MediaFileInput(this.formElement),
     };
     this.fileInputs = Object.fromEntries(
       Object.entries(this.fileInputs).filter(
@@ -61,16 +63,23 @@ export class Form {
     );
     resetButtons.forEach((resetButton: Element) => {
       (resetButton as HTMLButtonElement).addEventListener("click", () => {
-        Object.values(this.inputs).map((input) => input.setValue(""));
+        Object.values(this.inputs).map((input) => input.reset());
+        Object.values(this.fileInputs).map((input) => input.reset());
         this.formElement.removeAttribute("data-bhwf-state");
       });
     });
   }
 
   validate = () => {
-    const allInputs = [...Object.values(this.inputs), ...Object.values(this.fileInputs)];
-    return allInputs.reduce((isValidSoFar, input) => input.validate() && isValidSoFar, true);
-};
+    const allInputs = [
+      ...Object.values(this.inputs),
+      ...Object.values(this.fileInputs),
+    ];
+    return allInputs.reduce(
+      (isValidSoFar, input) => input.validate() && isValidSoFar,
+      true
+    );
+  };
 
   async submit() {
     if (!this.projectId) return;
@@ -84,6 +93,7 @@ export class Form {
       screenshots: this.fileInputs.screenshots?.getValue() || undefined,
       videos: this.fileInputs.videos?.getValue() || undefined,
       logs: this.fileInputs.logs?.getValue() || undefined,
+      media: this.fileInputs.media?.getValue() || undefined,
     };
 
     this.formElement.setAttribute("data-bhwf-state", "loading");
@@ -120,6 +130,33 @@ export class Form {
             issueId,
             logFile,
           });
+        }
+      }
+
+      
+      if (fileInputsData.media && fileInputsData.media.length > 0) {
+        for (const mediaFile of fileInputsData.media) {
+          const fileType = mediaFile.type;
+
+          if (fileType.startsWith("image/")) {
+            await API.uploadScreenshot({
+              projectId: this.projectId,
+              issueId,
+              screenshot: mediaFile,
+            });
+          } else if (fileType.startsWith("video/")) {
+            await API.uploadVideoClip({
+              projectId: this.projectId,
+              issueId,
+              videoClip: mediaFile,
+            });
+          } else {
+            await API.uploadLogFile({
+              projectId: this.projectId,
+              issueId,
+              logFile: mediaFile,
+            });
+          }
         }
       }
 
