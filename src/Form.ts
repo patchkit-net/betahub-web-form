@@ -2,6 +2,7 @@ import { DescriptionInput } from "./inputs/DescriptionInput";
 import { Input } from "./inputs/Input";
 import * as API from "./api";
 import { CreateNewIssueArgs } from "./types";
+import { StepsToReproduceInput } from "./inputs/StepsToReproduceInput";
 
 export class Form {
   projectId: string | null = null;
@@ -20,6 +21,7 @@ export class Form {
   _loadDefaultInputs() {
     this.inputs = {
       description: new DescriptionInput(this.formElement),
+      stepsToReproduce: new StepsToReproduceInput(this.formElement),
     };
 
     this.inputs = Object.fromEntries(
@@ -49,10 +51,11 @@ export class Form {
       Object.entries(this.inputs).map(([key, input]) => [key, input.getValue()])
     ) as CreateNewIssueArgs;
 
-    const response = await API.createNewIssue({
+    const { id: issueId } = await API.createNewIssue({
       ...data,
       projectId: this.projectId,
     });
-    console.log(response);
+    
+    console.log(`Issue created with ID: ${issueId}`);
   }
 }

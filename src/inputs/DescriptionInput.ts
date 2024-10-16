@@ -5,21 +5,13 @@ export class DescriptionInput extends Input {
     const element = formElement.querySelector(
       '[data-bhwf-input="description"]'
     ) as HTMLInputElement | null;
-    
-    if (element === null) {
-      super({
-        isDisabled: true,
-      });
-
-      return;
-    }
 
     const errorMsgElement = formElement.querySelector('[data-bhwf-error-msg="description"]') as HTMLElement | null;
 
     const validator = (value: string) => {
       const isValid = value.length > 50;
       if (isValid === false) {
-        element.classList.add('bhwf-error');
+        element?.classList.add('bhwf-error');
         if (errorMsgElement) {
           errorMsgElement.innerText = 'Description must be at least 50 characters long';
         }
@@ -28,7 +20,7 @@ export class DescriptionInput extends Input {
     };
 
     const onInput = () => {
-      element.classList.remove('bhwf-error');
+      element?.classList.remove('bhwf-error');
       if (errorMsgElement) {
         errorMsgElement.innerText = '';
       }

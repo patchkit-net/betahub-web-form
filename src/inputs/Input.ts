@@ -5,20 +5,21 @@ export class Input {
   validator: ((value: string) => boolean) | null = null;
 
   constructor({
-    isDisabled = false,
     element = null,
     errorMsgElement = null,
     validator,
     onInput,
   }: {
-    isDisabled?: boolean;
     element?: HTMLInputElement | null;
     errorMsgElement?: HTMLElement | null;
     validator?: (value: string) => boolean;
     onInput?: (value: string) => void;
   }) {
-    this.isDisabled = isDisabled;
+    this.isDisabled = element === null;
+    if (this.isDisabled) return;
+
     this.element = element;
+
     this.errorMsgElement = errorMsgElement;
     this.validator = validator || null;
 
@@ -29,7 +30,7 @@ export class Input {
     }
   }
 
-  validate = (): boolean => this.validator?.(this.getValue()) ?? false;
+  validate = (): boolean => this.validator?.(this.getValue()) ?? true;
   getValue = (): string => (this.element !== null ? this.element.value : "");
   setValue = (value: string) => {
     if (this.element !== null) this.element.value = value;
