@@ -1,5 +1,6 @@
-export type BHWFData = {
-  projectId: string | null;
-  issueId: string | null;
-  formElement: HTMLElement | null;
+export type CreateNewIssueArgs = {
+  projectId: string;
+  title?: string;
+  description: string;
+  stepsToReproduce?: string;
 }

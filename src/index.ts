@@ -1,17 +1,20 @@
-import { BHWFData } from './types';
+import { Form } from './Form';
 
 export * from './types';
-export * from './API';
+export * as API from './api';
 
 export const init = () => {
-  
+  const forms = document.querySelectorAll('[data-bhwf-form]') as NodeListOf<HTMLElement>;
+  forms.forEach((formElement) => {
+    new Form({ formElement });
+  });
 };
 
 declare global {
   interface Window {
     bhwf: {
       init: () => void;
-      forms: { [projectId: string]: BHWFData };
+      forms: { [projectId: string]: Form };
     };
   }
 }

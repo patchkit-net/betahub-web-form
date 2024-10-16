@@ -1,5 +1,5 @@
 import { BHWFData } from "./types";
-import * as API from "./API";
+import * as API from "./api";
 
 export const loadElement = (
   selector: string,

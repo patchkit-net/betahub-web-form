@@ -4,12 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BetaHub Web Form</title>
+
     <script type="module" src="../../dist/index.mjs"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bhwfDefaultStyle.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+      body {
+        width: 500px;
+        margin: 20px auto;
+        background-color: #222;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        font-family: 'Montserrat', sans-serif;
+      }
+    </style>
   </head>
   <body onload="bhwf.init()">
-    <form data-bhwf-project-id="pr-1972208695">
-      <h1>BetaHub Web Form</h1>
+    <!-- Example 1 - dark theme, universal media input -->
+    <div data-bhwf-form="pr-1972208695">
+      <h1>Example 1</h1>
 
       <label>Issue Description</label>
       <textarea
@@ -23,18 +39,67 @@
 
       <label>Attach Media</label>
       <input type="file" data-bhwf-input="media" multiple />
+      <div data-bhwf-drop-zone="media">Drag & drop files here or click to browse</div>
 
       <button data-bhwf-button="submit">Submit</button>
 
-      <div class="panel loading-panel">
-        <span class="loader"></span>
+      <div data-bhwf-modal="loading">
+        <div class="bhwf-loader"></div>
       </div>
 
-      <div class="panel success-panel">
+      <div data-bhwf-modal="error">
+        <h2>Something went wrong!</h2>
+        <p>Your issue couldn't be sent right now</p>
+        <button data-bhwf-button="submit">Try again</button>
+      </div>
+
+      <div data-bhwf-modal="success">
         <h2>All done!</h2>
-        <p>Thank you for submitting your issue!</p>
+        <p>Thank you for submitting your issue</p>
         <button data-bhwf-button="reset">Submit another issue</button>
       </div>
-    </form>
+    </div>
+
+    <!-- Example 1 - light theme, splitted media inputs -->
+    <div class="light" data-bhwf-form="pr-1972208695">
+      <h1>Example 2</h1>
+
+      <label>Issue Description</label>
+      <textarea
+        data-bhwf-input="description"
+        placeholder="Enter your issue description. Min. 50 characters"
+      ></textarea>
+      <span data-bhwf-error-msg="description"></span>
+
+      <label>Steps to Reproduce</label>
+      <textarea data-bhwf-input="stepsToReproduce" placeholder="Steps to reproduce"></textarea>
+
+      <label>Screenshots</label>
+      <input type="file" data-bhwf-input="screenshots" multiple />
+
+      <label>Video Clips</label>
+      <input type="file" data-bhwf-input="videos" multiple />
+
+      <label>Log Files</label>
+      <input type="file" data-bhwf-input="logs" multiple />
+
+      <button data-bhwf-button="submit">Submit</button>
+
+      <div data-bhwf-modal="loading">
+        <div class="bhwf-loader"></div>
+      </div>
+
+      <div data-bhwf-modal="error">
+        <h2>Something went wrong!</h2>
+        <p>Your issue couldn't be sent right now</p>
+        <button data-bhwf-button="submit">Try again</button>
+      </div>
+
+      <div data-bhwf-modal="success">
+        <h2>All done!</h2>
+        <p>Thank you for submitting your issue</p>
+        <button data-bhwf-button="reset">Submit another issue</button>
+      </div>
+    </div>
   </body>
 </html>

@@ -1,3 +1,5 @@
+import { CreateNewIssueArgs } from "./types";
+
 const ENDPOINT = 'http://localhost';
 
 export const createNewIssue = async ({
@@ -5,12 +7,7 @@ export const createNewIssue = async ({
   title,
   description,
   stepsToReproduce,
-}: {
-  projectId: string;
-  title?: string;
-  description: string;
-  stepsToReproduce?: string;
-}) => {
+}: CreateNewIssueArgs) => {
   const params = new URLSearchParams();
   if (title) params.append('issue[title]', title);
   params.append('issue[description]', description);
