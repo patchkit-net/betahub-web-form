@@ -56,8 +56,9 @@
 
 [data-bhwf-input] {
   resize: vertical;
-  min-height: 1em;
+  min-height: 1rem;
   padding: 10px;
+  font-size: 14px;
 
   outline: none;
   border-radius: var(--bhwf-radius);
@@ -66,6 +67,9 @@
   color: var(--bhwf-text-color);
 
   transition: border-color var(--bhwf-transition);
+}
+textarea[data-bhwf-input] {
+  min-height: 3rem;
 }
 [data-bhwf-input]::placeholder {
   color: var(--bhwf-text-color-secondary);

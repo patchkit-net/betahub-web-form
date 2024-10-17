@@ -4,8 +4,7 @@ export class FileInput {
   isDisabled: boolean = false;
   element: HTMLInputElement | null = null;
   errorMsgElement: HTMLElement | null = null;
-  dropZoneElement: HTMLElement | null = null;
-  fileListElement: HTMLElement | null = null;
+  dropzone: Dropzone | null = null;
   validator: ((value: FileList | null) => boolean) | null = null;
 
   constructor({
@@ -47,7 +46,6 @@ export class FileInput {
       const dropzoneElement = document.createElement("form");
       dropzoneElement.classList.add("dropzone");
       element.parentElement?.insertBefore(dropzoneElement, element.nextSibling);
-
       const acceptedFiles = element.getAttribute("accept") || undefined;
 
       const dropzone = new Dropzone(dropzoneElement, {
@@ -56,6 +54,7 @@ export class FileInput {
         addRemoveLinks: true,
         acceptedFiles,
       });
+      this.dropzone = dropzone;
 
       const _syncFileInputFiles = () => {
         if (element) {
@@ -67,10 +66,10 @@ export class FileInput {
       };
 
       dropzone.on("addedfile", (file) => {
-        _syncFileInputFiles();
         dropzone.emit("complete", file);
+        _syncFileInputFiles();
       });
-
+      dropzone.on("queuecomplete", (file) => _syncFileInputFiles());
       dropzone.on("removedfile", (file) => _syncFileInputFiles());
     }
   }
@@ -80,6 +79,6 @@ export class FileInput {
     this.element !== null ? this.element.files : null;
   reset = () => {
     if (this.element !== null) this.element.value = "";
-    if (this.fileListElement !== null) this.fileListElement.innerHTML = "";
+    if (this.dropzone !== null) this.dropzone.removeAllFiles();
   };
 }

@@ -1,9 +1,9 @@
+import Dropzone from "dropzone";
 export declare class FileInput {
     isDisabled: boolean;
     element: HTMLInputElement | null;
     errorMsgElement: HTMLElement | null;
-    dropZoneElement: HTMLElement | null;
-    fileListElement: HTMLElement | null;
+    dropzone: Dropzone | null;
     validator: ((value: FileList | null) => boolean) | null;
     constructor({ formElement, name, validator, onInput, }: {
         formElement: HTMLElement;
