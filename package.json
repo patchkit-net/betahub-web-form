@@ -5,8 +5,9 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "microbundle",
-    "start": "microbundle watch"
+    "build": "microbundle && cp src/*.css dist/",
+    "watch-css": "nodemon -w src/*.css -e css --exec \"cp src/*.css dist/\"",
+    "watch": "microbundle watch & npm run watch-css"
   },
   "source": "src/index.ts",
   "keywords": [
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "microbundle": "^0.15.1",
+    "nodemon": "^3.1.7",
     "typescript": "^5.6.3"
   }
 }
