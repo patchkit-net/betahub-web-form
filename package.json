@@ -5,9 +5,9 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "microbundle && cp src/*.css dist/",
+    "build": "microbundle -o dist/bhwf.js && cp src/*.css dist/",
     "watch-css": "nodemon -w src/*.css -e css --exec \"cp src/*.css dist/\"",
-    "watch": "microbundle watch & npm run watch-css"
+    "watch": "microbundle -o dist/bhwf.js watch & npm run watch-css"
   },
   "source": "src/index.ts",
   "keywords": [
