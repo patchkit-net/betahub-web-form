@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BetaHub Web Form</title>
 
-    <script type="module" src="../../dist/bhwf.mjs"></script>
-    <link rel="stylesheet" href="../../dist/bhwf.css">
+    <script src="../../dist/bhwf.min.umd.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../dist/bhwf.css" />
+    <link rel="stylesheet" type="text/css" href="../../dist/dropzone.css" />
 
-    <!-- <script type="module" src="https://unpkg.com/betahub-webform@latest/dist/bhwf.mjs"></script>
-    <link rel="stylesheet" href="https://unpkg.com/betahub-webform@latest/dist/bhwf.css"> -->
+    <!-- <script src="https://unpkg.com/betahub-webform@latest/dist/bhwf.min.umd.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/betahub-webform@latest/dist/bhwf.css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/betahub-webform@latest/dist/dropzone.css"> -->
 
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- General style -->
     <style>
       body {
         background-color: #222;
@@ -19,20 +26,21 @@
         justify-content: center;
         gap: 20px;
 
-        font-family: 'Assistant', sans-serif;
+        font-family: "Assistant", sans-serif;
       }
       body > div {
         width: 400px;
         height: fit-content;
       }
-      input, textarea {
-        font-family: 'Assistant', sans-serif;
+      input,
+      textarea {
+        font-family: "Assistant", sans-serif;
       }
     </style>
   </head>
-  <body onload="bhwf.init()">
+  <body>
     <!-- Example 1 - dark theme, universal media input -->
-    <div data-bhwf-form="pr-1972208695">
+    <div data-bhwf-form="pr-3251306887"">
       <h1>Example 1</h1>
 
       <label>Issue Description</label>
@@ -43,12 +51,13 @@
       <span data-bhwf-error-msg="description"></span>
 
       <label>Steps to Reproduce</label>
-      <textarea data-bhwf-input="stepsToReproduce" placeholder="Describe the steps leading to the issue"></textarea>
+      <textarea
+        data-bhwf-input="stepsToReproduce"
+        placeholder="Describe the steps leading to the issue"
+      ></textarea>
 
       <label>Attach Media</label>
-      <input type="file" data-bhwf-input="media" multiple style="display: none;"/>
-      <div data-bhwf-drop-zone="media">Drag & drop files here or click to browse</div>
-      <div data-bhwf-file-list="media"></div>
+      <input type="file" data-bhwf-input="media" data-bhwf-dropzone multiple />
 
       <button data-bhwf-button="submit">Submit</button>
 
@@ -69,8 +78,8 @@
       </div>
     </div>
 
-    <!-- Example 1 - light theme, splitted media inputs -->
-    <div class="light" data-bhwf-form="pr-1972208695">
+    <!-- Example 2 - light theme, splitted media inputs -->
+    <div class="light" data-bhwf-form="pr-3251306887">
       <h1>Example 2</h1>
 
       <label>Issue Description</label>
@@ -81,20 +90,21 @@
       <span data-bhwf-error-msg="description"></span>
 
       <label>Steps to Reproduce</label>
-      <textarea data-bhwf-input="stepsToReproduce" placeholder="Describe the steps leading to the issue"></textarea>
+      <textarea
+        data-bhwf-input="stepsToReproduce"
+        placeholder="Describe the steps leading to the issue"
+      ></textarea>
 
       <label>Screenshots</label>
-      <input type="file" data-bhwf-input="screenshots" multiple accept="image/*" />
-      <div data-bhwf-drop-zone="screenshots">Drag & drop files here or click to browse</div>
+      <input type="file" data-bhwf-input="screenshots" data-bhwf-dropzone multiple accept="image/*" />
       <span data-bhwf-error-msg="screenshots"></span>
-      <div data-bhwf-file-list="screenshots"></div>
 
       <label>Video Clips</label>
-      <input type="file" data-bhwf-input="videos" multiple />
+      <input type="file" data-bhwf-input="videos" data-bhwf-dropzone multiple accept="video/*" />
       <span data-bhwf-error-msg="videos"></span>
 
       <label>Log Files</label>
-      <input type="file" data-bhwf-input="logs" multiple />
+      <input type="file" data-bhwf-input="logs" data-bhwf-dropzone multiple />
       <span data-bhwf-error-msg="logs"></span>
 
       <button data-bhwf-button="submit">Submit</button>

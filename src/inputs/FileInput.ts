@@ -1,3 +1,5 @@
+import Dropzone from "dropzone";
+
 export class FileInput {
   isDisabled: boolean = false;
   element: HTMLInputElement | null = null;
@@ -20,9 +22,9 @@ export class FileInput {
     const element = formElement.querySelector(
       `[data-bhwf-input="${name}"]`
     ) as HTMLInputElement | null;
-    const errorMsgElement = formElement.querySelector(`[data-bhwf-error-msg="${name}"]`) as HTMLElement | null;
-    const dropZoneElement = formElement.querySelector(`[data-bhwf-drop-zone="${name}"]`) as HTMLElement | null;
-    const fileListElement = formElement.querySelector(`[data-bhwf-file-list="${name}"]`) as HTMLElement | null;
+    const errorMsgElement = formElement.querySelector(
+      `[data-bhwf-error-msg="${name}"]`
+    ) as HTMLElement | null;
 
     this.isDisabled = element === null;
     if (this.isDisabled) return;
@@ -30,8 +32,6 @@ export class FileInput {
     this.element = element;
 
     this.errorMsgElement = errorMsgElement;
-    this.dropZoneElement = dropZoneElement;
-    this.fileListElement = fileListElement;
     this.validator = validator || null;
 
     if (onInput) {
@@ -40,87 +40,39 @@ export class FileInput {
       );
     }
 
-    // Drag & drop
-    const dropZoneOriginalText = dropZoneElement?.innerText || "";
-    if (element && dropZoneElement) {
+    // Dropzone
+    const isDropzone = element?.getAttribute("data-bhwf-dropzone") !== null;
+    if (element && isDropzone) {
       element.style.display = "none";
+      const dropzoneElement = document.createElement("form");
+      dropzoneElement.classList.add("dropzone");
+      element.parentElement?.insertBefore(dropzoneElement, element.nextSibling);
 
-      dropZoneElement.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropZoneElement.classList.add("bhwf-drag-over");
-        dropZoneElement.innerText = "Drop here";
+      const acceptedFiles = element.getAttribute("accept") || undefined;
+
+      const dropzone = new Dropzone(dropzoneElement, {
+        url: "#",
+        autoProcessQueue: false,
+        addRemoveLinks: true,
+        acceptedFiles,
       });
-      dropZoneElement.addEventListener("dragleave", () => {
-        dropZoneElement.classList.remove("bhwf-drag-over");
-        dropZoneElement.innerText = dropZoneOriginalText;
-      });
-      dropZoneElement.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropZoneElement.classList.remove("bhwf-drag-over");
-        const files = (e.dataTransfer?.files || null) as FileList | null;
-        if (files) {
-          element.files = files;
-          element.dispatchEvent(new Event("input"));
-          dropZoneElement.innerText = dropZoneOriginalText;
-        }
-      });
-      dropZoneElement.addEventListener("click", () => element.click());
-    }
 
-    // File list
-    if (fileListElement) {
-    let selectedFiles: any[] = [];
-
-    element?.addEventListener("input", () => {
-        fileListElement.innerHTML = "";
-        if (element?.files) {
-            selectedFiles = Array.from(element.files);
-            updateFileList();
-        }
-    });
-
-    function updateFileList() {
-      if (!fileListElement) return;
-
-        fileListElement.innerHTML = "";
-        for (let i = 0; i < selectedFiles.length; i++) {
-            const file = selectedFiles[i];
-            const li = document.createElement("li");
-            const img = document.createElement("img");
-
-            if (file.type.startsWith("image/")) {
-                img.src = URL.createObjectURL(file);
-                img.onload = function () {
-                    URL.revokeObjectURL(img.src);
-                };
-                img.classList.add("thumbnail");
-                li.appendChild(img);
-            }
-
-            const textNode = document.createTextNode(file.name);
-            li.appendChild(textNode);
-
-            const removeButton = document.createElement("button");
-            removeButton.classList.add("remove-button");
-            removeButton.textContent = "Remove";
-            removeButton.addEventListener("click", () => {
-                selectedFiles.splice(i, 1);
-                updateFileList();
-                if (errorMsgElement) errorMsgElement.innerText = "";
-                if (dropZoneElement) dropZoneElement.classList.remove("bhwf-error");
-            });
-            li.appendChild(removeButton);
-
-            fileListElement.appendChild(li);
-        }
-
-        const dataTransfer = new DataTransfer();
-        selectedFiles.forEach(file => dataTransfer.items.add(file));
+      const _syncFileInputFiles = () => {
         if (element) {
-            element.files = dataTransfer.files;
+          const fileList = new DataTransfer();
+          dropzone.files.forEach((file) => fileList.items.add(file));
+          element.files = fileList.files;
+          element.dispatchEvent(new Event("input"));
         }
+      };
+
+      dropzone.on("addedfile", (file) => {
+        _syncFileInputFiles();
+        dropzone.emit("complete", file);
+      });
+
+      dropzone.on("removedfile", (file) => _syncFileInputFiles());
     }
-}
   }
 
   validate = (): boolean => this.validator?.(this.getValue()) ?? true;

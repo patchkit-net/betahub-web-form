@@ -5,9 +5,10 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "microbundle -o dist/bhwf.js && cp src/*.css dist/",
-    "watch-css": "nodemon -w src/*.css -e css --exec \"cp src/*.css dist/\"",
-    "watch": "microbundle -o dist/bhwf.js watch & npm run watch-css"
+    "build": "microbundle -o dist/bhwf.min.js && cp src/*.css dist/",
+    "prewatch": "mkdir -p dist",
+    "watch-css": "nodemon -w src -e css --exec 'cp src/*.css dist/'",
+    "watch": "microbundle -o dist/bhwf.min.js watch & npm run watch-css"
   },
   "source": "src/index.ts",
   "keywords": [
@@ -19,8 +20,12 @@
   "description": "BetaHub Webform",
   "devDependencies": {
     "@types/axios": "^0.14.0",
+    "@types/dropzone": "^5.7.8",
     "microbundle": "^0.15.1",
     "nodemon": "^3.1.7",
     "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "dropzone": "^6.0.0-beta.2"
   }
 }

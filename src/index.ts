@@ -24,3 +24,7 @@ const bhwf = {
   forms: {},
 };
 window.bhwf = bhwf;
+
+document.addEventListener('DOMContentLoaded', () => {
+  bhwf.init();
+});
