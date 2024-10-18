@@ -8,7 +8,7 @@ export class LogsFileInput extends FileInput {
           const file = value[i];
           if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
             this.element?.classList.add('bhwf-error');
-            this.dropZoneElement?.classList.add('bhwf-error');
+            this.dropzone?.element.classList.add('bhwf-error');
             if (this.errorMsgElement) {
               this.errorMsgElement.innerText = 'Files cannot be images or videos';
             }
@@ -21,6 +21,7 @@ export class LogsFileInput extends FileInput {
 
     const onInput = () => {
       this.element?.classList.remove('bhwf-error');
+      this.dropzone?.element.classList.remove('bhwf-error');
       if (this.errorMsgElement) {
         this.errorMsgElement.innerText = '';
       }

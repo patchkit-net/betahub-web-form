@@ -8,7 +8,7 @@ export class ScreenshotsFileInput extends FileInput {
           const file = value[i];
           if (!file.type.startsWith("image/")) {
             this.element?.classList.add('bhwf-error');
-            this.dropZoneElement?.classList.add('bhwf-error');
+            this.dropzone?.element.classList.add('bhwf-error');
             if (this.errorMsgElement) {
               this.errorMsgElement.innerText = 'All files must be images';
             }
@@ -21,6 +21,7 @@ export class ScreenshotsFileInput extends FileInput {
 
     const onInput = () => {
       this.element?.classList.remove('bhwf-error');
+      this.dropzone?.element.classList.remove('bhwf-error');
       if (this.errorMsgElement) {
         this.errorMsgElement.innerText = '';
       }

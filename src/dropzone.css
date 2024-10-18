@@ -199,21 +199,24 @@
     transform: scale(1);
   }
 }
-.dropzone, .dropzone * {
+.dropzone,
+.dropzone * {
   box-sizing: border-box;
 }
 
 .dropzone {
-  min-height: 100px;
+  min-height: 70px;
   border: 1px dashed var(--bhwf-input-border-color);
   border-radius: var(--bhwf-radius);
   background: var(--bhwf-input-bg-color);
-  padding: 10px;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  padding: 5px;
+}
+.dropzone.bhwf-error {
+  border-color: var(--bhwf-error-color);
 }
 .dropzone.dz-clickable {
   cursor: pointer;
@@ -234,8 +237,8 @@
   opacity: 0.5;
 }
 .dropzone .dz-message {
+  width: 100%;
   text-align: center;
-  margin: 2em 0;
   color: var(--bhwf-text-color-secondary);
 }
 .dropzone .dz-message .dz-button {
@@ -254,9 +257,10 @@
   vertical-align: top;
   min-height: 100px;
   border-radius: var(--bhwf-radius);
+  margin: 10px;
 }
 .dropzone .dz-preview:hover {
-  z-index: 1000;
+  z-index: 4;
 }
 .dropzone .dz-preview:hover .dz-details {
   opacity: 1;
@@ -302,7 +306,7 @@
   opacity: 1;
 }
 .dropzone .dz-preview .dz-details {
-  z-index: 20;
+  z-index: 2;
   width: 100%;
   height: calc(100% - 35px);
   position: absolute;
@@ -354,7 +358,7 @@
   height: 120px;
   position: relative;
   display: block;
-  z-index: 10;
+  z-index: 2;
   background: var(--bhwf-file-preview-bg-color);
   border: 1px solid var(--bhwf-input-border-color);
 }
@@ -380,7 +384,7 @@
 .dropzone .dz-preview .dz-error-mark {
   pointer-events: none;
   opacity: 0;
-  z-index: 500;
+  z-index: 3;
   position: absolute;
   display: block;
   top: 60px;
@@ -424,7 +428,7 @@
 }
 .dropzone .dz-preview .dz-progress {
   opacity: 1;
-  z-index: 1000;
+  z-index: 4;
   pointer-events: none;
   position: absolute;
   height: 16px;
