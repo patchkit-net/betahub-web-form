@@ -5,11 +5,11 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "watch": "microbundle -o dist/bhwf.min.js watch & npm run watch-css",
-    "build": "microbundle -o dist/bhwf.min.js && cp src/*.css dist/ && npm run minify-css",
+    "watch": "microbundle -o dist/bhwf.min.js --format iife,es watch & npm run watch-css",
+    "build": "microbundle -o dist/bhwf.min.js --format iife,es && npm run minify-css",
     "prewatch": "mkdir -p dist",
-    "watch-css": "nodemon -w src -e css --exec 'cp src/*.css dist/ && npm run minify-css'",
-    "minify-css": "for file in dist/*.css; do cleancss -o ${file%.css}.min.css $file; done"
+    "watch-css": "nodemon -w src -e css --exec 'npm run minify-css'",
+    "minify-css": "for file in src/*.css; do cleancss -o dist/$(basename $file .css).min.css $file; done"
   },
   "source": "src/index.ts",
   "keywords": [
