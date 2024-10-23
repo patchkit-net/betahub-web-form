@@ -1,30 +1,40 @@
-import { CreateNewIssueArgs, CreateNewIssueResponse } from "./types";
+import {
+  CreateNewIssueArgs,
+  CreateNewIssueResponse,
+  UploadLogFileArgs,
+  UploadLogFileResponse,
+  UploadScreenshotArgs,
+  UploadScreenshotResponse,
+  UploadVideoClipArgs,
+  UploadVideoClipResponse,
+} from "./types";
 
 // const ENDPOINT = 'http://localhost';
-const ENDPOINT = 'https://app.betahub.io';
+const ENDPOINT = "https://app.betahub.io";
 
 export const createNewIssue = async ({
   projectId,
   title,
   description,
-  stepsToReproduce,
+  stepsToReproduce
 }: CreateNewIssueArgs): Promise<CreateNewIssueResponse> => {
   const params = new URLSearchParams();
-  if (title) params.append('issue[title]', title);
-  params.append('issue[description]', description);
-  if (stepsToReproduce) params.append('issue[unformatted_steps_to_reproduce]', stepsToReproduce);
+  if (title) params.append("issue[title]", title);
+  params.append("issue[description]", description);
+  if (stepsToReproduce)
+    params.append("issue[unformatted_steps_to_reproduce]", stepsToReproduce);
 
   const response = await fetch(
     `${ENDPOINT}/projects/${projectId}/issues.json`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'FormUser anonymous',
-        'BetaHub-Project-ID': projectId,
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "FormUser anonymous",
+        "BetaHub-Project-ID": projectId,
       },
-      body: params.toString()
+      body: params.toString(),
     }
   );
 
@@ -38,25 +48,21 @@ export const createNewIssue = async ({
 export const uploadScreenshot = async ({
   projectId,
   issueId,
-  screenshot,
-}: {
-  projectId: string;
-  issueId: number;
-  screenshot: Blob;
-}) => {
+  screenshot
+}: UploadScreenshotArgs): Promise<UploadScreenshotResponse> => {
   const formData = new FormData();
-  formData.append('screenshot[image]', screenshot);
+  formData.append("screenshot[image]", screenshot);
 
   const response = await fetch(
     `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/screenshots`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Authorization': 'FormUser anonymous',
-        'BetaHub-Project-ID': projectId,
+        Accept: "application/json",
+        Authorization: "FormUser anonymous",
+        "BetaHub-Project-ID": projectId,
       },
-      body: formData
+      body: formData,
     }
   );
 
@@ -70,25 +76,21 @@ export const uploadScreenshot = async ({
 export const uploadVideoClip = async ({
   projectId,
   issueId,
-  videoClip,
-}: {
-  projectId: string;
-  issueId: number;
-  videoClip: Blob;
-}) => {
+  videoClip
+}: UploadVideoClipArgs): Promise<UploadVideoClipResponse> => {
   const formData = new FormData();
-  formData.append('video_clip[video]', videoClip);
+  formData.append("video_clip[video]", videoClip);
 
   const response = await fetch(
     `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/video_clips`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Authorization': 'FormUser anonymous',
-        'BetaHub-Project-ID': projectId,
+        Accept: "application/json",
+        Authorization: "FormUser anonymous",
+        "BetaHub-Project-ID": projectId,
       },
-      body: formData
+      body: formData,
     }
   );
 
@@ -102,25 +104,21 @@ export const uploadVideoClip = async ({
 export const uploadLogFile = async ({
   projectId,
   issueId,
-  logFile,
-}: {
-  projectId: string;
-  issueId: number;
-  logFile: Blob;
-}) => {
+  logFile
+}: UploadLogFileArgs): Promise<UploadLogFileResponse> => {
   const formData = new FormData();
-  formData.append('log_file[file]', logFile);
+  formData.append("log_file[file]", logFile);
 
   const response = await fetch(
     `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/log_files`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Authorization': 'FormUser anonymous',
-        'BetaHub-Project-ID': projectId,
+        Accept: "application/json",
+        Authorization: "FormUser anonymous",
+        "BetaHub-Project-ID": projectId,
       },
-      body: formData
+      body: formData,
     }
   );
 
