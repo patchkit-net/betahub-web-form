@@ -1,32 +1,28 @@
 export class Input {
   isDisabled: boolean = false;
-  element: HTMLInputElement | null = null;
-  errorMsgElement: HTMLElement | null = null;
-  validator: ((value: string) => boolean) | null = null;
+  element?: HTMLInputElement
+  errorMsgElement?: HTMLElement
+  validator?: ((value: string) => boolean)
 
   constructor({
-    name,
-    formElement,
+    element,
+    errorMsgElement,
     validator,
     onInput,
   }: {
-    name: string;
-    formElement: HTMLElement;
+    element?: HTMLInputElement;
+    errorMsgElement?: HTMLElement;
     validator?: (value: string) => boolean;
     onInput?: (value: string) => void;
   }) {
-    const element = formElement.querySelector(
-      `[data-bhwf-input="${name}"]`
-    ) as HTMLInputElement | null;
-    const errorMsgElement = formElement.querySelector(`[data-bhwf-error-msg="${name}"]`) as HTMLElement | null;
+    
 
     this.isDisabled = element === null;
     if (this.isDisabled) return;
 
     this.element = element;
-
     this.errorMsgElement = errorMsgElement;
-    this.validator = validator || null;
+    this.validator = validator;
 
     if (onInput) {
       element?.addEventListener("input", (e: Event) =>
@@ -36,8 +32,8 @@ export class Input {
   }
 
   validate = (): boolean => this.validator?.(this.getValue()) ?? true;
-  getValue = (): string => (this.element !== null ? this.element.value : "");
+  getValue = (): string => (this.element !== undefined ? this.element.value : "");
   reset = () => {
-    if (this.element !== null) this.element.value = "";
+    if (this.element !== undefined) this.element.value = "";
   };
 }

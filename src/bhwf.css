@@ -41,6 +41,7 @@
   --bhwf-file-preview-bg-color: #f4f4f4;
 }
 
+.bhwf-form,
 [data-bhwf-form] {
   user-select: none;
   position: relative;
@@ -54,6 +55,7 @@
   color: var(--bhwf-text-color);
 }
 
+.bhwf-input,
 [data-bhwf-input] {
   resize: vertical;
   min-height: 1rem;
@@ -68,24 +70,30 @@
 
   transition: border-color var(--bhwf-transition);
 }
+textarea.bhwf-input,
 textarea[data-bhwf-input] {
   min-height: 3rem;
 }
+.bhwf-input::placeholder,
 [data-bhwf-input]::placeholder {
   color: var(--bhwf-text-color-secondary);
 }
+.bhwf-input:focus,
 [data-bhwf-input]:focus {
   border-color: var(--bhwf-input-border-color-focus);
 }
+.bhwf-input.bhwf-error,
 [data-bhwf-input].bhwf-error {
   border-color: var(--bhwf-error-color);
 }
 
+.bhwf-error-msg,
 [data-bhwf-error-msg] {
   font-size: 14px;
   color: var(--bhwf-error-color);
 }
 
+.bhwf-button,
 [data-bhwf-button] {
   cursor: pointer;
   width: fit-content;
@@ -99,13 +107,16 @@ textarea[data-bhwf-input] {
 
   transition: background-color var(--bhwf-transition), transform var(--bhwf-transition);
 }
+.bhwf-button:hover,
 [data-bhwf-button]:hover {
   background-color: var(--bhwf-button-bg-color-hover);
 }
+.bhwf-button:active,
 [data-bhwf-button]:active {
   transform: scale(0.95);
 }
 
+.bhwf-modal,
 [data-bhwf-modal] {
   opacity: 0;
   pointer-events: none;
@@ -126,6 +137,10 @@ textarea[data-bhwf-input] {
   backdrop-filter: blur(3px);
 }
 
+.bhwf-modal-show {
+  opacity: 1;
+  pointer-events: all;
+}
 [data-bhwf-state="loading"] [data-bhwf-modal="loading"] {
   opacity: 1;
   pointer-events: all;

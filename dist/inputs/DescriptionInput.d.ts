@@ -1,4 +1,8 @@
-import { Input } from './Input';
+import { Input } from "./Input";
 export declare class DescriptionInput extends Input {
-    constructor(formElement: HTMLElement);
+    constructor({ formElement, element, errorMsgElement, }: {
+        formElement?: HTMLElement;
+        element?: HTMLInputElement;
+        errorMsgElement?: HTMLElement;
+    });
 }

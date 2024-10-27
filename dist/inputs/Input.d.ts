@@ -1,11 +1,11 @@
 export declare class Input {
     isDisabled: boolean;
-    element: HTMLInputElement | null;
-    errorMsgElement: HTMLElement | null;
-    validator: ((value: string) => boolean) | null;
-    constructor({ name, formElement, validator, onInput, }: {
-        name: string;
-        formElement: HTMLElement;
+    element?: HTMLInputElement;
+    errorMsgElement?: HTMLElement;
+    validator?: ((value: string) => boolean);
+    constructor({ element, errorMsgElement, validator, onInput, }: {
+        element?: HTMLInputElement;
+        errorMsgElement?: HTMLElement;
         validator?: (value: string) => boolean;
         onInput?: (value: string) => void;
     });

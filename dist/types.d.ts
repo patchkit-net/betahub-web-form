@@ -1,3 +1,21 @@
+import { Form } from "./Form";
+export type BHWF = {
+    init: () => void;
+    forms: {
+        [projectId: string]: Form;
+    };
+};
+declare global {
+    interface Window {
+        bhwf: BHWF;
+    }
+}
+export type API = {
+    createNewIssue: (args: CreateNewIssueArgs) => Promise<CreateNewIssueResponse>;
+    uploadScreenshot: (args: UploadScreenshotArgs) => Promise<UploadScreenshotResponse>;
+    uploadVideoClip: (args: UploadVideoClipArgs) => Promise<UploadVideoClipResponse>;
+    uploadLogFile: (args: UploadLogFileArgs) => Promise<UploadLogFileResponse>;
+};
 export type CreateNewIssueArgs = {
     projectId: string;
     title?: string;

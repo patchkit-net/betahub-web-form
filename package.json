@@ -1,24 +1,25 @@
 {
-  "name": "betahub-webform",
+  "name": "betahub-web-form",
   "version": "0.0.4",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "source": "src/bhwf.ts",
+  "main": "dist/bhwf.js",
+  "module": "dist/bhwf.esm.js",
+  "types": "dist/bhwf.d.ts",
   "scripts": {
-    "watch": "microbundle -o dist/bhwf.min.js --format iife,es watch & npm run watch-css",
-    "build": "microbundle -o dist/bhwf.min.js --format iife,es && npm run minify-css",
+    "build": "tsc && microbundle -f iife,es --sourcemap false && npm run minify-css",
+    "watch": "microbundle watch -f iife,es --sourcemap false & npm run watch-css",
     "prewatch": "mkdir -p dist",
     "watch-css": "nodemon -w src -e css --exec 'npm run minify-css'",
     "minify-css": "for file in src/*.css; do cleancss -o dist/$(basename $file .css).min.css $file; done"
   },
-  "source": "src/index.ts",
   "keywords": [
     "betahub",
-    "webform"
+    "web",
+    "form"
   ],
   "author": "b3nr0w",
   "license": "MIT",
-  "description": "BetaHub Webform",
+  "description": "BetaHub Web Form",
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/dropzone": "^5.7.8",

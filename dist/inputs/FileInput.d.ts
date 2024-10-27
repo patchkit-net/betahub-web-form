@@ -1,17 +1,17 @@
 import Dropzone from "dropzone";
 export declare class FileInput {
     isDisabled: boolean;
-    element: HTMLInputElement | null;
-    errorMsgElement: HTMLElement | null;
-    dropzone: Dropzone | null;
-    validator: ((value: FileList | null) => boolean) | null;
-    constructor({ formElement, name, validator, onInput, }: {
-        formElement: HTMLElement;
-        name: string;
-        validator?: (value: FileList | null) => boolean;
-        onInput?: (value: FileList | null) => void;
+    element?: HTMLInputElement;
+    errorMsgElement?: HTMLElement;
+    dropzone?: Dropzone;
+    validator?: (value?: FileList) => boolean;
+    constructor({ element, errorMsgElement, validator, onInput, }: {
+        element?: HTMLInputElement;
+        errorMsgElement?: HTMLElement;
+        validator?: (value?: FileList) => boolean;
+        onInput?: (value?: FileList) => void;
     });
     validate: () => boolean;
-    getValue: () => FileList | null;
+    getValue: () => FileList | undefined;
     reset: () => void;
 }

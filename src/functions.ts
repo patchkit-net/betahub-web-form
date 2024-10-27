@@ -1,4 +1,3 @@
-import { BHWFData } from "./types";
 import * as API from "./api";
 
 export const loadElement = (
@@ -9,6 +8,17 @@ export const loadElement = (
   if (!element) return null;
   return element as HTMLElement;
 };
+
+export const getInputElements = (parent: ParentNode = document, name: string) => {
+  const element = parent?.querySelector(
+    `[data-bhwf-input="${name}"]`
+  ) as HTMLInputElement | undefined || undefined;
+  const errorMsgElement = parent?.querySelector(
+    `[data-bhwf-error-msg="${name}"]`
+  ) as HTMLElement | undefined || undefined;
+
+  return { element, errorMsgElement };
+}
 
 export const loadForm = (element: HTMLElement) => {
   const projectId = element.getAttribute("bhwf-project-id");
@@ -56,7 +66,7 @@ export const loadForm = (element: HTMLElement) => {
   };
 };
 
-export const createIssue = async (data: BHWFData) => {
+export const createIssue = async (data: any) => {
   const { projectId, inputs: { description: descriptionInput } } = data;
 
   if (!projectId) throw new Error("Project ID is required");
@@ -72,7 +82,7 @@ export const createIssue = async (data: BHWFData) => {
   return data;
 };
 
-export const attachScreenshots = async (data: BHWFData) => {
+export const attachScreenshots = async (data: any) => {
   const { projectId, issueId, inputs: { description: descriptionInput, screenshots: screenshotsInput } } = data;
 
   if (!projectId) throw new Error("Project ID is required");
@@ -94,7 +104,7 @@ export const attachScreenshots = async (data: BHWFData) => {
   }
 };
 
-export const attachLogFiles = async (data: BHWFData) => {
+export const attachLogFiles = async (data: any) => {
   const { projectId, issueId, inputs: { description: descriptionInput, screenshots: screenshotsInput } } = data;
 
   if (!projectId) throw new Error("Project ID is required");

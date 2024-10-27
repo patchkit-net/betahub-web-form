@@ -3,32 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BetaHub Web Form</title>
+    <title>Imperative example - BetaHub Web Form</title>
 
-    <script src="../../dist/bhwf.min.js"></script>
+    <!-- For local development -->
+    <script src="../../dist/bhwf.js"></script>
     <link rel="stylesheet" type="text/css" href="../../dist/bhwf.min.css" />
     <link rel="stylesheet" type="text/css" href="../../dist/dropzone.min.css" />
 
-    <!-- <script src="https://unpkg.com/betahub-webform@latest/dist/bhwf.min.js"></script>
+    <!-- CDN -->
+    <!-- 
+    <script src="https://unpkg.com/betahub-webform@latest/dist/bhwf.js"></script>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/betahub-webform@latest/dist/bhwf.min.css">
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/betahub-webform@latest/dist/dropzone.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/betahub-webform@latest/dist/dropzone.min.css">
+    -->
 
+    <!-- General style -->
     <link
       href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap"
       rel="stylesheet"
     />
-
-    <!-- General style -->
     <style>
       body {
         background-color: #222;
         display: flex;
         justify-content: center;
+        flex-wrap: wrap;
         gap: 20px;
 
         font-family: "Assistant", sans-serif;
       }
-      body > div {
+      body > * {
         width: 432px;
         height: fit-content;
       }
@@ -40,7 +44,7 @@
   </head>
   <body>
     <!-- Example 1 - dark theme, universal media input -->
-    <div data-bhwf-form="pr-3251306887"">
+    <form data-bhwf-form="pr-3251306887">
       <h1>Example 1</h1>
 
       <label>Issue Description</label>
@@ -76,10 +80,10 @@
         <p>Thank you for submitting your issue</p>
         <button data-bhwf-button="reset">Submit another issue</button>
       </div>
-    </div>
+    </form>
 
     <!-- Example 2 - light theme, splitted media inputs -->
-    <div class="light" data-bhwf-form="pr-3251306887">
+    <form class="light" data-bhwf-form="pr-3251306887">
       <h1>Example 2</h1>
 
       <label>Issue Description</label>
@@ -96,11 +100,23 @@
       ></textarea>
 
       <label>Screenshots</label>
-      <input type="file" data-bhwf-input="screenshots" data-bhwf-dropzone multiple accept="image/*" />
+      <input
+        type="file"
+        data-bhwf-input="screenshots"
+        data-bhwf-dropzone
+        multiple
+        accept="image/*"
+      />
       <span data-bhwf-error-msg="screenshots"></span>
 
       <label>Video Clips</label>
-      <input type="file" data-bhwf-input="videos" data-bhwf-dropzone multiple accept="video/*" />
+      <input
+        type="file"
+        data-bhwf-input="videos"
+        data-bhwf-dropzone
+        multiple
+        accept="video/*"
+      />
       <span data-bhwf-error-msg="videos"></span>
 
       <label>Log Files</label>
@@ -125,6 +141,6 @@
         <p>Thank you for submitting your issue</p>
         <button data-bhwf-button="reset">Submit another issue</button>
       </div>
-    </div>
+    </form>
   </body>
 </html>

@@ -10,48 +10,85 @@ import { LogsFileInput } from "./inputs/LogsFileInput";
 import { MediaFileInput } from "./inputs/MediaFileInput";
 
 export class Form {
-  projectId: string | null = null;
+  projectId?: string;
+  formElement?: HTMLElement;
   inputs: { [inputName: string]: Input } = {};
   fileInputs: { [inputName: string]: FileInput } = {};
 
-  formElement: HTMLElement;
-
-  constructor({ formElement }: { formElement: HTMLElement }) {
-    this.projectId = formElement.getAttribute("data-bhwf-form");
+  constructor({
+    projectId,
+    formElement,
+    inputs,
+    errorMsgs,
+    buttons,
+  }: {
+    projectId?: string
+    formElement?: HTMLElement
+    inputs?: { [inputName: string]: HTMLInputElement };
+    errorMsgs?: { [inputName: string]: HTMLElement };
+    buttons?: { [inputName: string]: HTMLButtonElement };
+  }) {
+    if (projectId === undefined) {
+      if (formElement !== undefined) {
+        projectId = formElement.getAttribute("data-bhwf-form") || undefined;
+        if (projectId === undefined) {
+          throw new Error("projectId is required for data-bhwf-form attribute");
+        }
+      } else {
+        throw new Error("projectId is required if formElement is not provided");
+      }
+    }
+    this.projectId = projectId;
     this.formElement = formElement;
 
-    this._loadDefaultInputs();
-    this._handleButtons();
+    this._load({
+      inputs,
+      errorMsgs,
+      buttons,
+    });
   }
 
-  _loadDefaultInputs() {
+  _load({
+    inputs,
+    errorMsgs,
+    buttons,
+  }: {
+    inputs?: { [inputName: string]: HTMLInputElement };
+    errorMsgs?: { [inputName: string]: HTMLElement };
+    buttons?: { [inputName: string]: HTMLButtonElement };
+  }) {
     this.inputs = {
-      description: new DescriptionInput(this.formElement),
-      stepsToReproduce: new StepsToReproduceInput(this.formElement),
+      description: new DescriptionInput({formElement: this.formElement}),
+      stepsToReproduce: new StepsToReproduceInput({formElement: this.formElement}),
     };
     this.inputs = Object.fromEntries(
       Object.entries(this.inputs).filter(([key, input]) => !input.isDisabled)
     );
 
     this.fileInputs = {
-      screenshots: new ScreenshotsFileInput(this.formElement),
-      videos: new VideosFileInput(this.formElement),
-      logs: new LogsFileInput(this.formElement),
-      media: new MediaFileInput(this.formElement),
+      screenshots: new ScreenshotsFileInput({formElement: this.formElement}),
+      videos: new VideosFileInput({formElement: this.formElement}),
+      logs: new LogsFileInput({formElement: this.formElement}),
+      media: new MediaFileInput({formElement: this.formElement}),
     };
     this.fileInputs = Object.fromEntries(
       Object.entries(this.fileInputs).filter(
         ([key, input]) => !input.isDisabled
       )
     );
+
+    this._handleButtons();
   }
 
   _handleButtons() {
+    if (!this.formElement) return;
+
     const submitButtons = this.formElement.querySelectorAll(
       '[data-bhwf-button="submit"]'
     );
     submitButtons.forEach((submitButton: Element) => {
-      (submitButton as HTMLButtonElement).addEventListener("click", () => {
+      (submitButton as HTMLButtonElement).addEventListener("click", (e) => {
+        e.preventDefault();
         if (this.validate()) {
           this.submit();
         }
@@ -62,7 +99,10 @@ export class Form {
       '[data-bhwf-button="reset"]'
     );
     resetButtons.forEach((resetButton: Element) => {
-      (resetButton as HTMLButtonElement).addEventListener("click", () => {
+      (resetButton as HTMLButtonElement).addEventListener("click", (e) => {
+        e.preventDefault();
+        if (!this.formElement) return;
+
         Object.values(this.inputs).map((input) => input.reset());
         Object.values(this.fileInputs).map((input) => input.reset());
         this.formElement.removeAttribute("data-bhwf-state");
@@ -82,6 +122,7 @@ export class Form {
   };
 
   async submit() {
+    if (!this.formElement) return;
     if (!this.projectId) return;
 
     const inputsData = {
@@ -133,7 +174,6 @@ export class Form {
         }
       }
 
-      
       if (fileInputsData.media && fileInputsData.media.length > 0) {
         for (const mediaFile of fileInputsData.media) {
           const fileType = mediaFile.type;

@@ -1,3 +1,3 @@
-# BetaHub Webform
+# BetaHub Web Form
 
-This library helps you make custom external webforms for BetaHub projects.
+This library helps you make custom external web forms for BetaHub projects.

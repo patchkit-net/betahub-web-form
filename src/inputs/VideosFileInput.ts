@@ -1,8 +1,17 @@
+import { getInputElements } from "../functions";
 import { FileInput } from "./FileInput";
 
 export class VideosFileInput extends FileInput {
-  constructor(formElement: HTMLElement) {
-    const validator = (value: FileList | null) => {
+  constructor({
+    formElement,
+    element,
+    errorMsgElement,
+  }: {
+    formElement?: HTMLElement;
+    element?: HTMLInputElement;
+    errorMsgElement?: HTMLElement;
+  }) {
+    const validator = (value: FileList | undefined) => {
       if (value) {
         for (let i = 0; i < value.length; i++) {
           const file = value[i];
@@ -27,6 +36,18 @@ export class VideosFileInput extends FileInput {
       }
     }
 
-    super({ name: 'videos', formElement, validator, onInput });
+    const {
+      element: autoDetectedElement,
+      errorMsgElement: autoDetectedErrorMsgElement,
+    } = getInputElements(formElement, "videos");
+
+    if (element === undefined) {
+      element = autoDetectedElement;
+    }
+    if (errorMsgElement === undefined) {
+      errorMsgElement = autoDetectedErrorMsgElement;
+    }
+
+    super({ element, errorMsgElement, validator, onInput });
   }
 }
