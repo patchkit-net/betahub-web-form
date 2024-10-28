@@ -1,4 +1,3 @@
-import { DescriptionInput } from "./inputs/DescriptionInput";
 import { Input } from "./inputs/Input";
 import * as API from "./api";
 import {
@@ -8,12 +7,7 @@ import {
   FormElements,
   InputName,
 } from "./types";
-import { StepsToReproduceInput } from "./inputs/StepsToReproduceInput";
 import { FileInput } from "./inputs/FileInput";
-import { ScreenshotsFileInput } from "./inputs/ScreenshotsFileInput";
-import { VideosFileInput } from "./inputs/VideosFileInput";
-import { LogsFileInput } from "./inputs/LogsFileInput";
-import { MediaFileInput } from "./inputs/MediaFileInput";
 import { deepMerge, getFormElements } from "./functions";
 
 export class Form {
@@ -77,14 +71,63 @@ export class Form {
   }: {
     customElements?: Partial<FormElements>;
   }) {
+    const defaultValidators = {
+      description: {
+        validator: (value: string | undefined): [boolean, string | undefined] => {
+          if (!value) return [false, "Description is required"];
+          if (value.length < 50) return [false, "Description must be at least 50 characters"];
+          return [true, undefined];
+        },
+      },
+      screenshots: {
+        validator: (value: File[] | undefined): [boolean, string | undefined] => {        
+          if (value) {
+            for (let i = 0; i < value.length; i++) {
+              const file = value[i];
+              if (!file.type.startsWith("image/")) {
+                return [false, 'All files must be images'];
+              }
+            }
+          }
+          return [true, undefined];
+        }
+      },
+      videos: {
+        validator: (value: File[] | undefined): [boolean, string | undefined] => {        
+          if (value) {
+            for (let i = 0; i < value.length; i++) {
+              const file = value[i];
+              if (!file.type.startsWith("video/")) {
+                return [false, 'All files must be videos'];
+              }
+            }
+          }
+          return [true, undefined];
+        }
+      },
+      logs: {
+        validator: (value: File[] | undefined): [boolean, string | undefined] => {        
+          if (value) {
+            for (let i = 0; i < value.length; i++) {
+              const file = value[i];
+              if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+                return [false, 'Files cannot be images or videos'];
+              }
+            }
+          }
+          return [true, undefined];
+        }
+      },
+    };
+    const defaultFormElements = deepMerge(getFormElements(this.formElement), defaultValidators);
     const formElements = deepMerge(
       customElements || {},
-      getFormElements(this.formElement)
+      defaultFormElements
     );
 
     this.inputs = {
-      description: new DescriptionInput({ ...formElements.description }),
-      stepsToReproduce: new StepsToReproduceInput({
+      description: new Input({ ...formElements.description }),
+      stepsToReproduce: new Input({
         ...formElements.stepsToReproduce,
       }),
     };
@@ -93,10 +136,10 @@ export class Form {
     );
 
     this.fileInputs = {
-      screenshots: new ScreenshotsFileInput({ ...formElements.screenshots }),
-      videos: new VideosFileInput({ ...formElements.videos }),
-      logs: new LogsFileInput({ ...formElements.logs }),
-      media: new MediaFileInput({ ...formElements.media }),
+      screenshots: new FileInput({ ...formElements.screenshots }),
+      videos: new FileInput({ ...formElements.videos }),
+      logs: new FileInput({ ...formElements.logs }),
+      media: new FileInput({ ...formElements.media }),
     };
     this.fileInputs = Object.fromEntries(
       Object.entries(this.fileInputs).filter(

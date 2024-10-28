@@ -32,6 +32,7 @@ export type FormElements = {
     [key in InputName]: {
         inputElement?: HTMLInputElement;
         errorMsgElement?: HTMLElement;
+        validator?: (value: string | File) => [boolean, string | undefined];
     };
 };
 export type API = {
