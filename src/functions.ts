@@ -1,4 +1,3 @@
-import * as API from "./api";
 import { BHWFI, FormElements, InputName } from "./types";
 
 export const deepMerge = (target: any, source: any): any => {
@@ -23,15 +22,6 @@ export const autoInit = (BHWF: BHWFI) => {
     const bhwfForm = new BHWF.Form({ formElement });
     BHWF.forms[projectId] = bhwfForm;
   });
-};
-
-export const loadElement = (
-  selector: string,
-  parent: ParentNode = document
-) => {
-  const element = parent.querySelector(selector);
-  if (!element) return null;
-  return element as HTMLElement;
 };
 
 export const getInputElements = (parent: ParentNode = document, inputName: InputName) => {
@@ -64,64 +54,4 @@ export const getFormElements = (formElement?: HTMLElement): Partial<FormElements
   }
 
   return result;
-};
-
-export const createIssue = async (data: any) => {
-  const { projectId, inputs: { description: descriptionInput } } = data;
-
-  if (!projectId) throw new Error("Project ID is required");
-  if (!descriptionInput) throw new Error("Description input not found");
-  if (!descriptionInput.value) throw new Error("Description is required");
-
-  const issueResponse = await API.createNewIssue({
-    projectId,
-    description: descriptionInput.value,
-  });
-
-  data.issueId = issueResponse.id;
-  return data;
-};
-
-export const attachScreenshots = async (data: any) => {
-  const { projectId, issueId, inputs: { description: descriptionInput, screenshots: screenshotsInput } } = data;
-
-  if (!projectId) throw new Error("Project ID is required");
-  if (!issueId) throw new Error("Issue is not yet created");
-
-  if (
-    screenshotsInput &&
-    screenshotsInput.files &&
-    screenshotsInput.files.length > 0
-  ) {
-    for (const screenshot of screenshotsInput.files) {
-      console.log("Screenshot:", screenshot.name);
-      await API.uploadScreenshot({
-        projectId,
-        issueId,
-        screenshot,
-      });
-    }
-  }
-};
-
-export const attachLogFiles = async (data: any) => {
-  const { projectId, issueId, inputs: { description: descriptionInput, screenshots: screenshotsInput } } = data;
-
-  if (!projectId) throw new Error("Project ID is required");
-  if (!issueId) throw new Error("Issue is not yet created");
-
-  if (
-    screenshotsInput &&
-    screenshotsInput.files &&
-    screenshotsInput.files.length > 0
-  ) {
-    for (const screenshot of screenshotsInput.files) {
-      console.log("Screenshot:", screenshot.name);
-      await API.uploadScreenshot({
-        projectId,
-        issueId,
-        screenshot,
-      });
-    }
-  }
 };

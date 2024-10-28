@@ -11,7 +11,7 @@ const resetButtonElement = document.getElementById('reset-button') as HTMLButton
 const retryButtonElement = document.getElementById('retry-button') as HTMLButtonElement;
 
 const form = new BHWF.Form({
-  projectId: 'asd',
+  projectId: 'asd', // Set your project ID here
   customElements: {
     description: {
       inputElement: descriptionInputElement,
