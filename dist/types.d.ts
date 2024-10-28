@@ -1,4 +1,6 @@
 import { Form } from "./Form";
+import { FileInput } from "./inputs/FileInput";
+import { Input } from "./inputs/Input";
 export interface BHWFI {
     Form: typeof Form;
     API: API;
@@ -11,6 +13,19 @@ declare global {
     interface Window {
         BHWF: BHWFI;
     }
+}
+export type EventType = keyof EventDataMap;
+export interface EventDataMap {
+    loading: undefined;
+    success: undefined;
+    inputError: {
+        message?: string;
+        input: Input | FileInput;
+    };
+    apiError: {
+        message?: string;
+        status: number;
+    };
 }
 export type InputName = "description" | "stepsToReproduce" | "screenshots" | "videos" | "logs" | "media";
 export type FormElements = {

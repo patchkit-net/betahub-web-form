@@ -7,6 +7,11 @@ const descriptionErrorMsgElement = document.getElementById('description-error-ms
 const stepsToReproduceInputElement = document.getElementById('steps-to-reproduce-input') as HTMLInputElement;
 const mediaInputElement = document.getElementById('media-input') as HTMLInputElement;
 
+const loadingModalElement = document.getElementById('loading-modal') as HTMLDivElement;
+const errorModalElement = document.getElementById('error-modal') as HTMLDivElement;
+const errorTextElement = document.getElementById('error-text') as HTMLSpanElement;
+const successModalElement = document.getElementById('success-modal') as HTMLDivElement;
+
 const submitButtonElement = document.getElementById('submit-button') as HTMLButtonElement;
 const resetButtonElement = document.getElementById('reset-button') as HTMLButtonElement;
 const retryButtonElement = document.getElementById('retry-button') as HTMLButtonElement;
@@ -14,7 +19,7 @@ const retryButtonElement = document.getElementById('retry-button') as HTMLButton
 transformIntoDropzone(mediaInputElement);
 
 const form = new BHWF.Form({
-  projectId: 'asd', // Set your project ID here
+  projectId: 'pr-3251306887', // Set your project ID here
   customElements: {
     description: {
       inputElement: descriptionInputElement,
@@ -29,6 +34,23 @@ const form = new BHWF.Form({
   }
 });
 
+form.on('loading', () => {
+  loadingModalElement.classList.add('bhwf-modal-show');
+})
+form.on('apiError', (data) => {
+  loadingModalElement.classList.remove('bhwf-modal-show');
+  errorModalElement.classList.add('bhwf-modal-show');
+  console.log(data)
+  if (data?.status !== undefined) {
+    if (data.status === 404) data.message = 'Project not found';
+    errorTextElement.innerText = data?.message || '';
+  }
+})
+form.on('success', () => {
+  loadingModalElement.classList.remove('bhwf-modal-show');
+  successModalElement.classList.add('bhwf-modal-show');
+})
+
 submitButtonElement.addEventListener('click', (e) => {
   e.preventDefault();
   if (form.validate()) {
@@ -38,6 +60,7 @@ submitButtonElement.addEventListener('click', (e) => {
 
 resetButtonElement.addEventListener('click', (e) => {
   e.preventDefault();
+  successModalElement.classList.remove('bhwf-modal-show');
   form.reset();
 });
 

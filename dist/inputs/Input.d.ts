@@ -2,14 +2,13 @@ export declare class Input {
     isDisabled: boolean;
     inputElement?: HTMLInputElement;
     errorMsgElement?: HTMLElement;
-    validator?: ((value: string) => boolean);
-    constructor({ inputElement, errorMsgElement, validator, onInput, }: {
+    validator?: ((value: string) => [boolean, string | undefined]);
+    constructor({ inputElement, errorMsgElement, validator, }: {
         inputElement?: HTMLInputElement;
         errorMsgElement?: HTMLElement;
-        validator?: (value: string) => boolean;
-        onInput?: (value: string) => void;
+        validator?: (value: string) => [boolean, string | undefined];
     });
-    validate: () => boolean;
+    validate: () => [boolean, string | undefined];
     getValue: () => string;
     reset: () => void;
 }

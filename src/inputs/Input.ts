@@ -2,18 +2,16 @@ export class Input {
   isDisabled: boolean = false;
   inputElement?: HTMLInputElement
   errorMsgElement?: HTMLElement
-  validator?: ((value: string) => boolean)
+  validator?: ((value: string) => [boolean, string | undefined])
 
   constructor({
     inputElement,
     errorMsgElement,
     validator,
-    onInput,
   }: {
     inputElement?: HTMLInputElement;
     errorMsgElement?: HTMLElement;
-    validator?: (value: string) => boolean;
-    onInput?: (value: string) => void;
+    validator?: (value: string) => [boolean, string | undefined];
   }) {
     
 
@@ -23,15 +21,9 @@ export class Input {
     this.inputElement = inputElement;
     this.errorMsgElement = errorMsgElement;
     this.validator = validator;
-
-    if (onInput) {
-      inputElement?.addEventListener("input", (e: Event) =>
-        onInput((e.target as HTMLInputElement)?.value || "")
-      );
-    }
   }
 
-  validate = (): boolean => this.validator?.(this.getValue()) ?? true;
+  validate = (): [boolean, string | undefined] => this.validator?.(this.getValue()) ?? [true, undefined];
   getValue = (): string => (this.inputElement !== undefined ? this.inputElement.value : "");
   reset = () => {
     if (this.inputElement !== undefined) this.inputElement.value = "";

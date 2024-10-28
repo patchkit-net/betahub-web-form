@@ -16,7 +16,7 @@ export const createNewIssue = async ({
   projectId,
   title,
   description,
-  stepsToReproduce
+  stepsToReproduce,
 }: CreateNewIssueArgs): Promise<CreateNewIssueResponse> => {
   const params = new URLSearchParams();
   if (title) params.append("issue[title]", title);
@@ -39,7 +39,7 @@ export const createNewIssue = async ({
   );
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw response;
   }
 
   return response.json();
@@ -48,7 +48,7 @@ export const createNewIssue = async ({
 export const uploadScreenshot = async ({
   projectId,
   issueId,
-  screenshot
+  screenshot,
 }: UploadScreenshotArgs): Promise<UploadScreenshotResponse> => {
   const formData = new FormData();
   formData.append("screenshot[image]", screenshot);
@@ -67,7 +67,7 @@ export const uploadScreenshot = async ({
   );
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw response;
   }
 
   return response.json();
@@ -76,7 +76,7 @@ export const uploadScreenshot = async ({
 export const uploadVideoClip = async ({
   projectId,
   issueId,
-  videoClip
+  videoClip,
 }: UploadVideoClipArgs): Promise<UploadVideoClipResponse> => {
   const formData = new FormData();
   formData.append("video_clip[video]", videoClip);
@@ -95,7 +95,7 @@ export const uploadVideoClip = async ({
   );
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw response;
   }
 
   return response.json();
@@ -104,7 +104,7 @@ export const uploadVideoClip = async ({
 export const uploadLogFile = async ({
   projectId,
   issueId,
-  logFile
+  logFile,
 }: UploadLogFileArgs): Promise<UploadLogFileResponse> => {
   const formData = new FormData();
   formData.append("log_file[file]", logFile);
@@ -123,7 +123,7 @@ export const uploadLogFile = async ({
   );
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw response;
   }
 
   return response.json();

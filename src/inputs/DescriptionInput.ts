@@ -6,30 +6,17 @@ export class DescriptionInput extends Input {
     inputElement,
     errorMsgElement,
   }: FormElements["description"]) {
-    const validator = (value: string) => {
-      const isValid = value.length > 50;
-      if (isValid === false) {
-        this.inputElement?.classList.add("bhwf-error");
-        if (this.errorMsgElement) {
-          this.errorMsgElement.innerText =
-            "Description must be at least 50 characters long";
-        }
+    const validator = (value: string): [boolean, string | undefined] => {
+      if (value.length < 50) {
+        return [false, "Description must be at least 50 characters long"];
       }
-      return isValid;
-    };
-
-    const onInput = () => {
-      this.inputElement?.classList.remove("bhwf-error");
-      if (this.errorMsgElement) {
-        this.errorMsgElement.innerText = "";
-      }
+      return [true, undefined];
     };
 
     super({
       inputElement,
       errorMsgElement,
       validator,
-      onInput,
     });
   }
 }

@@ -1,7 +1,13 @@
 import { DescriptionInput } from "./inputs/DescriptionInput";
 import { Input } from "./inputs/Input";
 import * as API from "./api";
-import { CreateNewIssueArgs, FormElements, InputName } from "./types";
+import {
+  CreateNewIssueArgs,
+  EventDataMap,
+  EventType,
+  FormElements,
+  InputName,
+} from "./types";
 import { StepsToReproduceInput } from "./inputs/StepsToReproduceInput";
 import { FileInput } from "./inputs/FileInput";
 import { ScreenshotsFileInput } from "./inputs/ScreenshotsFileInput";
@@ -15,6 +21,7 @@ export class Form {
   formElement?: HTMLElement;
   inputs: Partial<{ [inputName in InputName]: Input }> = {};
   fileInputs: Partial<{ [inputName in InputName]: FileInput }> = {};
+  private eventCallbacks: { [key in EventType]?: Array<(data?: EventDataMap[key]) => void> } = {};
 
   constructor({
     formElement,
@@ -41,11 +48,39 @@ export class Form {
     this.formElement = formElement;
 
     this._load({ customElements });
+
+    this.on('inputError', (data) => {
+      this.formElement?.setAttribute("data-bhwf-state", "inputError");
+      data?.input?.inputElement?.classList.add("bhwf-error");
+      if (data?.input instanceof FileInput) {
+        data?.input?.dropzone?.element.classList.add("bhwf-error");
+      }
+      if (data?.input?.errorMsgElement) {
+        data.input.errorMsgElement.innerText = data.message || '';
+      }
+    });
+    this.on('apiError', (data) => {
+      this.formElement?.setAttribute("data-bhwf-state", "apiError");
+    });
+    this.on('loading', () => {
+      this.formElement?.setAttribute("data-bhwf-state", "loading");
+    });
+    this.on('success', () => {
+      this.formElement?.setAttribute("data-bhwf-state", "success");
+    });
+
+    this.formElement?.addEventListener('input', this.cleanErrors);
   }
 
-  _load({ customElements }: { customElements?: Partial<FormElements> }) {
-    const formElements = deepMerge(customElements || {}, getFormElements(this.formElement));
-    console.log(formElements);
+  private _load({
+    customElements,
+  }: {
+    customElements?: Partial<FormElements>;
+  }) {
+    const formElements = deepMerge(
+      customElements || {},
+      getFormElements(this.formElement)
+    );
 
     this.inputs = {
       description: new DescriptionInput({ ...formElements.description }),
@@ -72,7 +107,7 @@ export class Form {
     this._handleButtons();
   }
 
-  _handleButtons() {
+  private _handleButtons() {
     if (!this.formElement) return;
 
     const submitButtons = this.formElement.querySelectorAll(
@@ -98,16 +133,48 @@ export class Form {
     });
   }
 
+  on<K extends keyof EventDataMap>(event: K, callback: (data?: EventDataMap[K]) => void): void {
+    if (!this.eventCallbacks[event]) {
+      this.eventCallbacks[event] = [];
+    }
+    this.eventCallbacks[event]!.push(callback);
+  }
+
+  emit<K extends keyof EventDataMap>(event: K, data?: EventDataMap[K]): void {
+    const callbacks = this.eventCallbacks[event];
+    if (callbacks) {
+      callbacks.forEach((callback) => callback(data));
+    }
+  }
+
   validate = () => {
     const allInputs = [
       ...Object.values(this.inputs),
       ...Object.values(this.fileInputs),
     ];
-    return allInputs.reduce(
-      (isValidSoFar, input) => input.validate() && isValidSoFar,
-      true
-    );
+    return allInputs.reduce((isValidSoFar, input) => {
+      const [isValid, errorMessage] = input.validate();
+      if (!isValid) this.emit("inputError", { message: errorMessage, input });
+      return isValid && isValidSoFar;
+    }, true);
   };
+
+  cleanErrors = () => {
+    this.formElement?.removeAttribute("data-bhwf-state")
+    const allInputs = [
+      ...Object.values(this.inputs),
+      ...Object.values(this.fileInputs),
+    ];
+    allInputs.forEach((input) => {
+      input.inputElement?.classList.remove("bhwf-error");
+      if (input instanceof FileInput) {
+        input.dropzone?.element.classList.remove("bhwf-error");
+      }
+      if (input.errorMsgElement) {
+        input.errorMsgElement.innerText = '';
+      }
+    });
+  }
 
   reset() {
     Object.values(this.inputs).map((input) => input.reset());
@@ -116,7 +183,8 @@ export class Form {
   }
 
   async submit() {
-    if (!this.projectId) throw new Error("projectId is required to submit the form");
+    if (!this.projectId)
+      throw new Error("projectId is required to submit the form");
 
     const inputsData = {
       description: this.inputs.description?.getValue() || undefined,
@@ -130,7 +198,7 @@ export class Form {
       media: this.fileInputs.media?.getValue() || undefined,
     };
 
-    this.formElement?.setAttribute("data-bhwf-state", "loading");
+    this.emit("loading");
     try {
       const { id: issueId } = await API.createNewIssue({
         ...inputsData,
@@ -193,9 +261,12 @@ export class Form {
         }
       }
 
-      this.formElement?.setAttribute("data-bhwf-state", "success");
+      this.emit("success");
     } catch (error) {
-      this.formElement?.setAttribute("data-bhwf-state", "error");
+      const errorResponse = await error as Response;
+      const message = (await errorResponse.json()).error;
+      const status = errorResponse.status;
+      this.emit("apiError", { message, status });
     }
   }
 }

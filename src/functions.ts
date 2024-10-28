@@ -76,7 +76,7 @@ export const transformIntoDropzone = (inputElement: HTMLInputElement) => {
       const fileList = new DataTransfer();
       dropzone.files.forEach((file) => fileList.items.add(file));
       inputElement.files = fileList.files;
-      inputElement.dispatchEvent(new Event("input"));
+      inputElement.dispatchEvent(new Event("input", { bubbles: true }));
     }
   };
 

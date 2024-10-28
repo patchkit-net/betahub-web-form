@@ -6,18 +6,16 @@ export class FileInput {
   inputElement?: HTMLInputElement;
   errorMsgElement?: HTMLElement;
   dropzone?: Dropzone;
-  validator?: (value?: FileList) => boolean;
+  validator?: (value?: FileList) => [boolean, string | undefined];
 
   constructor({
     inputElement,
     errorMsgElement,
     validator,
-    onInput,
   }: {
     inputElement?: HTMLInputElement;
     errorMsgElement?: HTMLElement;
-    validator?: (value?: FileList) => boolean;
-    onInput?: (value?: FileList) => void;
+    validator?: (value?: FileList) => [boolean, string | undefined];
   }) {
     this.isDisabled = inputElement === null;
     if (this.isDisabled) return;
@@ -25,12 +23,6 @@ export class FileInput {
     this.inputElement = inputElement;
     this.errorMsgElement = errorMsgElement;
     this.validator = validator;
-
-    if (onInput) {
-      inputElement?.addEventListener("input", (e) =>
-        onInput((e.target as HTMLInputElement).files || undefined)
-      );
-    }
 
     // Dropzone
     const isDropzone = inputElement?.getAttribute("data-bhwf-dropzone") !== null;
@@ -40,7 +32,7 @@ export class FileInput {
     }
   }
 
-  validate = (): boolean => this.validator?.(this.getValue()) ?? true;
+  validate = (): [boolean, string | undefined] => this.validator?.(this.getValue()) ?? [true, undefined];
   getValue = (): FileList | undefined =>
     this.inputElement !== undefined ? this.inputElement.files || undefined : undefined;
   reset = () => {
