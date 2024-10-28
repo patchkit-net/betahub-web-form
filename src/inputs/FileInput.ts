@@ -1,4 +1,5 @@
 import Dropzone from "dropzone";
+import { transformIntoDropzone } from "../functions";
 
 export class FileInput {
   isDisabled: boolean = false;
@@ -34,7 +35,7 @@ export class FileInput {
     // Dropzone
     const isDropzone = inputElement?.getAttribute("data-bhwf-dropzone") !== null;
     if (inputElement && isDropzone) {
-      const dropzone = createDropzone(inputElement);
+      const dropzone = transformIntoDropzone(inputElement);
       this.dropzone = dropzone;
     }
   }
@@ -48,35 +49,3 @@ export class FileInput {
   };
 }
 
-const createDropzone = (inputElement: HTMLInputElement) => {
-  inputElement.style.display = "none";
-  const dropzoneElement = document.createElement("form");
-  dropzoneElement.classList.add("dropzone");
-  inputElement.parentElement?.insertBefore(dropzoneElement, inputElement.nextSibling);
-  const acceptedFiles = inputElement.getAttribute("accept") || undefined;
-
-  const dropzone = new Dropzone(dropzoneElement, {
-    url: "#",
-    autoProcessQueue: false,
-    addRemoveLinks: true,
-    acceptedFiles,
-  });
-
-  const _syncFileInputFiles = () => {
-    if (inputElement) {
-      const fileList = new DataTransfer();
-      dropzone.files.forEach((file) => fileList.items.add(file));
-      inputElement.files = fileList.files;
-      inputElement.dispatchEvent(new Event("input"));
-    }
-  };
-
-  dropzone.on("addedfile", (file) => {
-    dropzone.emit("complete", file);
-    _syncFileInputFiles();
-  });
-  dropzone.on("queuecomplete", (file) => _syncFileInputFiles());
-  dropzone.on("removedfile", (file) => _syncFileInputFiles());
-
-  return dropzone;
-};

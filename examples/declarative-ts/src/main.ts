@@ -1,5 +1,6 @@
 import "betahub-web-form/dist/bhwf.min.css";
-import BHWF from "betahub-web-form";
+import "betahub-web-form/dist/dropzone.min.css";
+import BHWF, { transformIntoDropzone } from "betahub-web-form";
 
 const descriptionInputElement = document.getElementById('description-input') as HTMLInputElement;
 const descriptionErrorMsgElement = document.getElementById('description-error-msg') as HTMLSpanElement;
@@ -9,6 +10,8 @@ const mediaInputElement = document.getElementById('media-input') as HTMLInputEle
 const submitButtonElement = document.getElementById('submit-button') as HTMLButtonElement;
 const resetButtonElement = document.getElementById('reset-button') as HTMLButtonElement;
 const retryButtonElement = document.getElementById('retry-button') as HTMLButtonElement;
+
+transformIntoDropzone(mediaInputElement);
 
 const form = new BHWF.Form({
   projectId: 'asd', // Set your project ID here

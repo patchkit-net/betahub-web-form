@@ -1,3 +1,4 @@
+import Dropzone from "dropzone";
 import { BHWFI, FormElements, InputName } from "./types";
 
 export const deepMerge = (target: any, source: any): any => {
@@ -54,4 +55,37 @@ export const getFormElements = (formElement?: HTMLElement): Partial<FormElements
   }
 
   return result;
+};
+
+export const transformIntoDropzone = (inputElement: HTMLInputElement) => {
+  inputElement.style.display = "none";
+  const dropzoneElement = document.createElement("form");
+  dropzoneElement.classList.add("dropzone");
+  inputElement.parentElement?.insertBefore(dropzoneElement, inputElement.nextSibling);
+  const acceptedFiles = inputElement.getAttribute("accept") || undefined;
+
+  const dropzone = new Dropzone(dropzoneElement, {
+    url: "#",
+    autoProcessQueue: false,
+    addRemoveLinks: true,
+    acceptedFiles,
+  });
+
+  const _syncFileInputFiles = () => {
+    if (inputElement) {
+      const fileList = new DataTransfer();
+      dropzone.files.forEach((file) => fileList.items.add(file));
+      inputElement.files = fileList.files;
+      inputElement.dispatchEvent(new Event("input"));
+    }
+  };
+
+  dropzone.on("addedfile", (file) => {
+    dropzone.emit("complete", file);
+    _syncFileInputFiles();
+  });
+  dropzone.on("queuecomplete", (file) => _syncFileInputFiles());
+  dropzone.on("removedfile", (file) => _syncFileInputFiles());
+
+  return dropzone;
 };

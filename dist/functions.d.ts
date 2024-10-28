@@ -1,3 +1,4 @@
+import Dropzone from "dropzone";
 import { BHWFI, FormElements, InputName } from "./types";
 export declare const deepMerge: (target: any, source: any) => any;
 export declare const autoInit: (BHWF: BHWFI) => void;
@@ -6,3 +7,4 @@ export declare const getInputElements: (parent: ParentNode | undefined, inputNam
     errorMsgElement: HTMLElement | undefined;
 };
 export declare const getFormElements: (formElement?: HTMLElement) => Partial<FormElements>;
+export declare const transformIntoDropzone: (inputElement: HTMLInputElement) => Dropzone;

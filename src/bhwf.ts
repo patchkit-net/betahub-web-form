@@ -16,4 +16,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 export * from "./types";
+export * from "./functions";
 export default BHWF;
