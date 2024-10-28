@@ -1,4 +1,29 @@
 import * as API from "./api";
+import { BHWFI, FormElements, InputName } from "./types";
+
+export const deepMerge = (target: any, source: any): any => {
+  for (const key of Object.keys(source)) {
+    if (source[key] instanceof Object && key in target) {
+      Object.assign(source[key], deepMerge(target[key], source[key]));
+    }
+  }
+  Object.assign(target || {}, source);
+  return target;
+}
+
+export const autoInit = (BHWF: BHWFI) => {
+  const formElements = document.querySelectorAll(
+    "[data-bhwf-form]"
+  ) as NodeListOf<HTMLElement>;
+  formElements.forEach((formElement) => {
+    const projectId = formElement.getAttribute("data-bhwf-form");
+    if (!projectId) {
+      throw new Error("Project ID for data-bhwf-form is required");
+    }
+    const bhwfForm = new BHWF.Form({ formElement });
+    BHWF.forms[projectId] = bhwfForm;
+  });
+};
 
 export const loadElement = (
   selector: string,
@@ -9,61 +34,36 @@ export const loadElement = (
   return element as HTMLElement;
 };
 
-export const getInputElements = (parent: ParentNode = document, name: string) => {
-  const element = parent?.querySelector(
-    `[data-bhwf-input="${name}"]`
+export const getInputElements = (parent: ParentNode = document, inputName: InputName) => {
+  const inputElement = parent?.querySelector(
+    `[data-bhwf-input="${inputName}"]`
   ) as HTMLInputElement | undefined || undefined;
   const errorMsgElement = parent?.querySelector(
-    `[data-bhwf-error-msg="${name}"]`
+    `[data-bhwf-error-msg="${inputName}"]`
   ) as HTMLElement | undefined || undefined;
 
-  return { element, errorMsgElement };
-}
+  return { inputElement, errorMsgElement };
+};
 
-export const loadForm = (element: HTMLElement) => {
-  const projectId = element.getAttribute("bhwf-project-id");
-  const descriptionInput = loadElement(
-    "[bhwf-issue-description]",
-    element
-  ) as HTMLInputElement;
-  const descriptionErrorMsgElement = loadElement(
-    "[bhwf-issue-description-error-msg]",
-    element
-  ) as HTMLElement;
-  const stepsToReproduceInput = loadElement(
-    "[bhwf-issue-steps]"
-  ) as HTMLInputElement;
-  const mediaInput = loadElement(
-    "[bhwf-issue-media]",
-    element
-  ) as HTMLInputElement;
-  const screenshotsInput = loadElement(
-    "[bhwf-issue-screenshots]",
-    element
-  ) as HTMLInputElement;
-  const videosInput = loadElement(
-    "[bhwf-issue-videos]",
-    element
-  ) as HTMLInputElement;
-  const logFilesInput = loadElement(
-    "[bhwf-issue-logs]",
-    element
-  ) as HTMLInputElement;
+export const getFormElements = (formElement?: HTMLElement): Partial<FormElements> => {
+  if (!formElement) return {} as FormElements;
 
-  return {
-    projectId,
-    inputs: {
-      description: descriptionInput,
-      stepsToReproduce: stepsToReproduceInput,
-      media: mediaInput,
-      screenshots: screenshotsInput,
-      videos: videosInput,
-      logs: logFilesInput,
-    },
-    errorMsgs: {
-      description: descriptionErrorMsgElement,
-    }
-  };
+  const inputNames: InputName[] = [
+    "description",
+    "stepsToReproduce",
+    "screenshots",
+    "videos",
+    "logs",
+    "media",
+  ]
+
+  const result: Partial<FormElements> = {};
+  for (const inputName of inputNames) {
+    const { inputElement, errorMsgElement } = getInputElements(formElement, inputName);
+    result[inputName] = { inputElement, errorMsgElement };
+  }
+
+  return result;
 };
 
 export const createIssue = async (data: any) => {

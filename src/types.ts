@@ -1,22 +1,42 @@
 import { Form } from "./Form";
 
-export type BHWF = {
-  init: () => void;
+export interface BHWFI {
+  Form: typeof Form;
+  API: API;
+  autoInit: () => void;
   forms: { [projectId: string]: Form };
-}
-
+};
 declare global {
   interface Window {
-    bhwf: BHWF;
+    BHWF: BHWFI;
   }
 }
 
+export type InputName =
+  | "description"
+  | "stepsToReproduce"
+  | "screenshots"
+  | "videos"
+  | "logs"
+  | "media";
+
+export type FormElements = {
+  [key in InputName]: {
+    inputElement?: HTMLInputElement;
+    errorMsgElement?: HTMLElement;
+  };
+};
+
 export type API = {
   createNewIssue: (args: CreateNewIssueArgs) => Promise<CreateNewIssueResponse>;
-  uploadScreenshot: (args: UploadScreenshotArgs) => Promise<UploadScreenshotResponse>;
-  uploadVideoClip: (args: UploadVideoClipArgs) => Promise<UploadVideoClipResponse>;
+  uploadScreenshot: (
+    args: UploadScreenshotArgs
+  ) => Promise<UploadScreenshotResponse>;
+  uploadVideoClip: (
+    args: UploadVideoClipArgs
+  ) => Promise<UploadVideoClipResponse>;
   uploadLogFile: (args: UploadLogFileArgs) => Promise<UploadLogFileResponse>;
-}
+};
 
 export type CreateNewIssueArgs = {
   projectId: string;
@@ -51,7 +71,7 @@ export type UploadScreenshotArgs = {
   projectId: string;
   issueId: number;
   screenshot: Blob;
-}
+};
 
 export type UploadScreenshotResponse = {
   id: number;
@@ -61,13 +81,13 @@ export type UploadScreenshotResponse = {
   description: null | string;
   issue_id: number;
   media_size_bytes: number;
-}
+};
 
 export type UploadVideoClipArgs = {
   projectId: string;
   issueId: number;
   videoClip: Blob;
-}
+};
 
 export type UploadVideoClipResponse = {
   id: number;
@@ -77,17 +97,17 @@ export type UploadVideoClipResponse = {
   processed: boolean;
   failed: boolean;
   media_size_bytes: number;
-}
+};
 
 export type UploadLogFileArgs = {
   projectId: string;
   issueId: number;
   logFile: Blob;
-}
+};
 
 export type UploadLogFileResponse = {
   id: number;
   created_at: string;
   updated_at: string;
   media_size_bytes: number;
-}
+};

@@ -1,20 +1,15 @@
-import { getInputElements } from "../functions";
+import { FormElements } from "../types";
 import { Input } from "./Input";
 
 export class DescriptionInput extends Input {
   constructor({
-    formElement,
-    element,
+    inputElement,
     errorMsgElement,
-  }: {
-    formElement?: HTMLElement;
-    element?: HTMLInputElement;
-    errorMsgElement?: HTMLElement;
-  }) {
+  }: FormElements["description"]) {
     const validator = (value: string) => {
       const isValid = value.length > 50;
       if (isValid === false) {
-        this.element?.classList.add("bhwf-error");
+        this.inputElement?.classList.add("bhwf-error");
         if (this.errorMsgElement) {
           this.errorMsgElement.innerText =
             "Description must be at least 50 characters long";
@@ -24,26 +19,14 @@ export class DescriptionInput extends Input {
     };
 
     const onInput = () => {
-      this.element?.classList.remove("bhwf-error");
+      this.inputElement?.classList.remove("bhwf-error");
       if (this.errorMsgElement) {
         this.errorMsgElement.innerText = "";
       }
     };
 
-    const {
-      element: autoDetectedElement,
-      errorMsgElement: autoDetectedErrorMsgElement,
-    } = getInputElements(formElement, "description");
-
-    if (element === undefined) {
-      element = autoDetectedElement;
-    }
-    if (errorMsgElement === undefined) {
-      errorMsgElement = autoDetectedErrorMsgElement;
-    }
-
     super({
-      element,
+      inputElement,
       errorMsgElement,
       validator,
       onInput,

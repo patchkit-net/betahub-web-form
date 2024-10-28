@@ -1,15 +1,24 @@
 import { Form } from "./Form";
-export type BHWF = {
-    init: () => void;
+export interface BHWFI {
+    Form: typeof Form;
+    API: API;
+    autoInit: () => void;
     forms: {
         [projectId: string]: Form;
     };
-};
+}
 declare global {
     interface Window {
-        bhwf: BHWF;
+        BHWF: BHWFI;
     }
 }
+export type InputName = "description" | "stepsToReproduce" | "screenshots" | "videos" | "logs" | "media";
+export type FormElements = {
+    [key in InputName]: {
+        inputElement?: HTMLInputElement;
+        errorMsgElement?: HTMLElement;
+    };
+};
 export type API = {
     createNewIssue: (args: CreateNewIssueArgs) => Promise<CreateNewIssueResponse>;
     uploadScreenshot: (args: UploadScreenshotArgs) => Promise<UploadScreenshotResponse>;

@@ -1,4 +1,4 @@
-export * as API from "./api";
+import { BHWFI } from "./types";
+declare const BHWF: BHWFI;
 export * from "./types";
-export { Form } from "./Form";
-export declare const init: () => void;
+export default BHWF;

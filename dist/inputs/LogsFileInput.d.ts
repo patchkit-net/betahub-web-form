@@ -1,8 +1,5 @@
+import { FormElements } from "../types";
 import { FileInput } from "./FileInput";
 export declare class LogsFileInput extends FileInput {
-    constructor({ formElement, element, errorMsgElement, }: {
-        formElement?: HTMLElement;
-        element?: HTMLInputElement;
-        errorMsgElement?: HTMLElement;
-    });
+    constructor({ inputElement, errorMsgElement, }: FormElements["logs"]);
 }

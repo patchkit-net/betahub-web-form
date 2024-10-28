@@ -1,38 +1,37 @@
 import { DescriptionInput } from "./inputs/DescriptionInput";
 import { Input } from "./inputs/Input";
 import * as API from "./api";
-import { CreateNewIssueArgs } from "./types";
+import { CreateNewIssueArgs, FormElements, InputName } from "./types";
 import { StepsToReproduceInput } from "./inputs/StepsToReproduceInput";
 import { FileInput } from "./inputs/FileInput";
 import { ScreenshotsFileInput } from "./inputs/ScreenshotsFileInput";
 import { VideosFileInput } from "./inputs/VideosFileInput";
 import { LogsFileInput } from "./inputs/LogsFileInput";
 import { MediaFileInput } from "./inputs/MediaFileInput";
+import { deepMerge, getFormElements } from "./functions";
 
 export class Form {
   projectId?: string;
   formElement?: HTMLElement;
-  inputs: { [inputName: string]: Input } = {};
-  fileInputs: { [inputName: string]: FileInput } = {};
+  inputs: Partial<{ [inputName in InputName]: Input }> = {};
+  fileInputs: Partial<{ [inputName in InputName]: FileInput }> = {};
 
   constructor({
-    projectId,
     formElement,
-    inputs,
-    errorMsgs,
-    buttons,
+    projectId,
+    customElements,
   }: {
-    projectId?: string
-    formElement?: HTMLElement
-    inputs?: { [inputName: string]: HTMLInputElement };
-    errorMsgs?: { [inputName: string]: HTMLElement };
-    buttons?: { [inputName: string]: HTMLButtonElement };
+    formElement?: HTMLElement;
+    projectId?: string;
+    customElements?: Partial<FormElements>;
   }) {
     if (projectId === undefined) {
       if (formElement !== undefined) {
         projectId = formElement.getAttribute("data-bhwf-form") || undefined;
         if (projectId === undefined) {
-          throw new Error("projectId is required for data-bhwf-form attribute");
+          throw new Error(
+            "projectId is required if data-bhwf-form attribute doesn't provide a value"
+          );
         }
       } else {
         throw new Error("projectId is required if formElement is not provided");
@@ -41,35 +40,28 @@ export class Form {
     this.projectId = projectId;
     this.formElement = formElement;
 
-    this._load({
-      inputs,
-      errorMsgs,
-      buttons,
-    });
+    this._load({ customElements });
   }
 
-  _load({
-    inputs,
-    errorMsgs,
-    buttons,
-  }: {
-    inputs?: { [inputName: string]: HTMLInputElement };
-    errorMsgs?: { [inputName: string]: HTMLElement };
-    buttons?: { [inputName: string]: HTMLButtonElement };
-  }) {
+  _load({ customElements }: { customElements?: Partial<FormElements> }) {
+    const formElements = deepMerge(customElements || {}, getFormElements(this.formElement));
+    console.log(formElements);
+
     this.inputs = {
-      description: new DescriptionInput({formElement: this.formElement}),
-      stepsToReproduce: new StepsToReproduceInput({formElement: this.formElement}),
+      description: new DescriptionInput({ ...formElements.description }),
+      stepsToReproduce: new StepsToReproduceInput({
+        ...formElements.stepsToReproduce,
+      }),
     };
     this.inputs = Object.fromEntries(
       Object.entries(this.inputs).filter(([key, input]) => !input.isDisabled)
     );
 
     this.fileInputs = {
-      screenshots: new ScreenshotsFileInput({formElement: this.formElement}),
-      videos: new VideosFileInput({formElement: this.formElement}),
-      logs: new LogsFileInput({formElement: this.formElement}),
-      media: new MediaFileInput({formElement: this.formElement}),
+      screenshots: new ScreenshotsFileInput({ ...formElements.screenshots }),
+      videos: new VideosFileInput({ ...formElements.videos }),
+      logs: new LogsFileInput({ ...formElements.logs }),
+      media: new MediaFileInput({ ...formElements.media }),
     };
     this.fileInputs = Object.fromEntries(
       Object.entries(this.fileInputs).filter(
@@ -101,11 +93,7 @@ export class Form {
     resetButtons.forEach((resetButton: Element) => {
       (resetButton as HTMLButtonElement).addEventListener("click", (e) => {
         e.preventDefault();
-        if (!this.formElement) return;
-
-        Object.values(this.inputs).map((input) => input.reset());
-        Object.values(this.fileInputs).map((input) => input.reset());
-        this.formElement.removeAttribute("data-bhwf-state");
+        this.reset();
       });
     });
   }
@@ -121,9 +109,14 @@ export class Form {
     );
   };
 
+  reset() {
+    Object.values(this.inputs).map((input) => input.reset());
+    Object.values(this.fileInputs).map((input) => input.reset());
+    this.formElement?.removeAttribute("data-bhwf-state");
+  }
+
   async submit() {
-    if (!this.formElement) return;
-    if (!this.projectId) return;
+    if (!this.projectId) throw new Error("projectId is required to submit the form");
 
     const inputsData = {
       description: this.inputs.description?.getValue() || undefined,
@@ -137,7 +130,7 @@ export class Form {
       media: this.fileInputs.media?.getValue() || undefined,
     };
 
-    this.formElement.setAttribute("data-bhwf-state", "loading");
+    this.formElement?.setAttribute("data-bhwf-state", "loading");
     try {
       const { id: issueId } = await API.createNewIssue({
         ...inputsData,
@@ -200,9 +193,9 @@ export class Form {
         }
       }
 
-      this.formElement.setAttribute("data-bhwf-state", "success");
+      this.formElement?.setAttribute("data-bhwf-state", "success");
     } catch (error) {
-      this.formElement.setAttribute("data-bhwf-state", "error");
+      this.formElement?.setAttribute("data-bhwf-state", "error");
     }
   }
 }

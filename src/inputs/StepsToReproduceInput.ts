@@ -1,30 +1,13 @@
-import { getInputElements } from "../functions";
+import { FormElements } from "../types";
 import { Input } from "./Input";
 
 export class StepsToReproduceInput extends Input {
   constructor({
-    formElement,
-    element,
+    inputElement,
     errorMsgElement,
-  }: {
-    formElement?: HTMLElement;
-    element?: HTMLInputElement;
-    errorMsgElement?: HTMLElement;
-  }) {
-    const {
-      element: autoDetectedElement,
-      errorMsgElement: autoDetectedErrorMsgElement,
-    } = getInputElements(formElement, "stepsToReproduce");
-
-    if (element === undefined) {
-      element = autoDetectedElement;
-    }
-    if (errorMsgElement === undefined) {
-      errorMsgElement = autoDetectedErrorMsgElement;
-    }
-
+  }: FormElements["stepsToReproduce"]) {
     super({
-      element,
+      inputElement,
       errorMsgElement,
     });
   }

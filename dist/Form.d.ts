@@ -1,39 +1,25 @@
 import { Input } from "./inputs/Input";
+import { FormElements, InputName } from "./types";
 import { FileInput } from "./inputs/FileInput";
 export declare class Form {
     projectId?: string;
     formElement?: HTMLElement;
-    inputs: {
-        [inputName: string]: Input;
-    };
-    fileInputs: {
-        [inputName: string]: FileInput;
-    };
-    constructor({ projectId, formElement, inputs, errorMsgs, buttons, }: {
-        projectId?: string;
+    inputs: Partial<{
+        [inputName in InputName]: Input;
+    }>;
+    fileInputs: Partial<{
+        [inputName in InputName]: FileInput;
+    }>;
+    constructor({ formElement, projectId, customElements, }: {
         formElement?: HTMLElement;
-        inputs?: {
-            [inputName: string]: HTMLInputElement;
-        };
-        errorMsgs?: {
-            [inputName: string]: HTMLElement;
-        };
-        buttons?: {
-            [inputName: string]: HTMLButtonElement;
-        };
+        projectId?: string;
+        customElements?: Partial<FormElements>;
     });
-    _load({ inputs, errorMsgs, buttons, }: {
-        inputs?: {
-            [inputName: string]: HTMLInputElement;
-        };
-        errorMsgs?: {
-            [inputName: string]: HTMLElement;
-        };
-        buttons?: {
-            [inputName: string]: HTMLButtonElement;
-        };
+    _load({ customElements }: {
+        customElements?: Partial<FormElements>;
     }): void;
     _handleButtons(): void;
     validate: () => boolean;
+    reset(): void;
     submit(): Promise<void>;
 }

@@ -2,58 +2,58 @@ import Dropzone from "dropzone";
 
 export class FileInput {
   isDisabled: boolean = false;
-  element?: HTMLInputElement;
+  inputElement?: HTMLInputElement;
   errorMsgElement?: HTMLElement;
   dropzone?: Dropzone;
   validator?: (value?: FileList) => boolean;
 
   constructor({
-    element,
+    inputElement,
     errorMsgElement,
     validator,
     onInput,
   }: {
-    element?: HTMLInputElement;
+    inputElement?: HTMLInputElement;
     errorMsgElement?: HTMLElement;
     validator?: (value?: FileList) => boolean;
     onInput?: (value?: FileList) => void;
   }) {
-    this.isDisabled = element === null;
+    this.isDisabled = inputElement === null;
     if (this.isDisabled) return;
 
-    this.element = element;
+    this.inputElement = inputElement;
     this.errorMsgElement = errorMsgElement;
     this.validator = validator;
 
     if (onInput) {
-      element?.addEventListener("input", (e) =>
+      inputElement?.addEventListener("input", (e) =>
         onInput((e.target as HTMLInputElement).files || undefined)
       );
     }
 
     // Dropzone
-    const isDropzone = element?.getAttribute("data-bhwf-dropzone") !== null;
-    if (element && isDropzone) {
-      const dropzone = createDropzone(element);
+    const isDropzone = inputElement?.getAttribute("data-bhwf-dropzone") !== null;
+    if (inputElement && isDropzone) {
+      const dropzone = createDropzone(inputElement);
       this.dropzone = dropzone;
     }
   }
 
   validate = (): boolean => this.validator?.(this.getValue()) ?? true;
   getValue = (): FileList | undefined =>
-    this.element !== undefined ? this.element.files || undefined : undefined;
+    this.inputElement !== undefined ? this.inputElement.files || undefined : undefined;
   reset = () => {
-    if (this.element !== undefined) this.element.value = "";
+    if (this.inputElement !== undefined) this.inputElement.value = "";
     if (this.dropzone !== undefined) this.dropzone.removeAllFiles();
   };
 }
 
-const createDropzone = (element: HTMLInputElement) => {
-  element.style.display = "none";
+const createDropzone = (inputElement: HTMLInputElement) => {
+  inputElement.style.display = "none";
   const dropzoneElement = document.createElement("form");
   dropzoneElement.classList.add("dropzone");
-  element.parentElement?.insertBefore(dropzoneElement, element.nextSibling);
-  const acceptedFiles = element.getAttribute("accept") || undefined;
+  inputElement.parentElement?.insertBefore(dropzoneElement, inputElement.nextSibling);
+  const acceptedFiles = inputElement.getAttribute("accept") || undefined;
 
   const dropzone = new Dropzone(dropzoneElement, {
     url: "#",
@@ -63,11 +63,11 @@ const createDropzone = (element: HTMLInputElement) => {
   });
 
   const _syncFileInputFiles = () => {
-    if (element) {
+    if (inputElement) {
       const fileList = new DataTransfer();
       dropzone.files.forEach((file) => fileList.items.add(file));
-      element.files = fileList.files;
-      element.dispatchEvent(new Event("input"));
+      inputElement.files = fileList.files;
+      inputElement.dispatchEvent(new Event("input"));
     }
   };
 
