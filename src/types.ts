@@ -32,9 +32,9 @@ export type InputName =
 
 export type FormElements = {
   [key in InputName]: {
-    inputElement?: HTMLInputElement;
+    inputElement?: HTMLInputElement | HTMLTextAreaElement;
     errorMsgElement?: HTMLElement;
-    validator?: (value: string | File) => [boolean, string | undefined];
+    validator?: (value: string | File[]) => [boolean, string | undefined];
   };
 };
 

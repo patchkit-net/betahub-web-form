@@ -4,7 +4,32 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>Declarative React + TS example - BetaHub Web Form</title>
+
+    <!-- General style -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #222;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+
+        font-family: "Assistant", sans-serif;
+      }
+      body > * {
+        width: 432px;
+        height: fit-content;
+      }
+      input,
+      textarea {
+        font-family: "Assistant", sans-serif;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

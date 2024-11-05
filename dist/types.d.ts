@@ -30,9 +30,9 @@ export interface EventDataMap {
 export type InputName = "description" | "stepsToReproduce" | "screenshots" | "videos" | "logs" | "media";
 export type FormElements = {
     [key in InputName]: {
-        inputElement?: HTMLInputElement;
+        inputElement?: HTMLInputElement | HTMLTextAreaElement;
         errorMsgElement?: HTMLElement;
-        validator?: (value: string | File) => [boolean, string | undefined];
+        validator?: (value: string | File[]) => [boolean, string | undefined];
     };
 };
 export type API = {
