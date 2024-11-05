@@ -11,59 +11,63 @@ import { FileInput } from "./inputs/FileInput";
 import { deepMerge, getFormElements } from "./functions";
 
 export class Form {
-  projectId?: string;
-  formElement?: HTMLElement;
+  projectId: string;
+  apiKey: string;
+  formElement?: HTMLElement | HTMLFormElement;
   inputs: Partial<{ [inputName in InputName]: Input }> = {};
   fileInputs: Partial<{ [inputName in InputName]: FileInput }> = {};
-  private eventCallbacks: { [key in EventType]?: Array<(data?: EventDataMap[key]) => void> } = {};
+  private eventCallbacks: {
+    [key in EventType]?: Array<(data?: EventDataMap[key]) => void>;
+  } = {};
+  errorApiMsgElement?: HTMLElement;
 
   constructor({
     formElement,
     projectId,
+    apiKey,
     customElements,
   }: {
-    formElement?: HTMLElement;
+    formElement?: HTMLElement | HTMLFormElement;
     projectId?: string;
+    apiKey?: string;
     customElements?: Partial<FormElements>;
   }) {
     if (projectId === undefined) {
-      if (formElement !== undefined) {
-        projectId = formElement.getAttribute("data-bhwf-form") || undefined;
-        if (projectId === undefined) {
-          throw new Error(
-            "projectId is required if data-bhwf-form attribute doesn't provide a value"
-          );
-        }
-      } else {
-        throw new Error("projectId is required if formElement is not provided");
-      }
+      throw new Error("projectId is required");
+    }
+    if (apiKey === undefined) {
+      throw new Error("apiKey is required");
     }
     this.projectId = projectId;
+    this.apiKey = apiKey;
     this.formElement = formElement;
 
     this._load({ customElements });
 
-    this.on('inputError', (data) => {
+    this.on("inputError", (data) => {
       this.formElement?.setAttribute("data-bhwf-state", "inputError");
       data?.input?.inputElement?.classList.add("bhwf-error");
       if (data?.input instanceof FileInput) {
         data?.input?.dropzone?.element.classList.add("bhwf-error");
       }
       if (data?.input?.errorMsgElement) {
-        data.input.errorMsgElement.innerText = data.message || '';
+        data.input.errorMsgElement.innerText = data.message || "";
       }
     });
-    this.on('apiError', (data) => {
+    this.on("apiError", (data) => {
       this.formElement?.setAttribute("data-bhwf-state", "apiError");
+      if (this.errorApiMsgElement) {
+        this.errorApiMsgElement.innerText = data?.message || "";
+      }
     });
-    this.on('loading', () => {
+    this.on("loading", () => {
       this.formElement?.setAttribute("data-bhwf-state", "loading");
     });
-    this.on('success', () => {
+    this.on("success", () => {
       this.formElement?.setAttribute("data-bhwf-state", "success");
     });
 
-    this.formElement?.addEventListener('input', this.cleanErrors);
+    this.formElement?.addEventListener("input", this.cleanErrors);
   }
 
   private _load({
@@ -73,57 +77,69 @@ export class Form {
   }) {
     const defaultValidators = {
       description: {
-        validator: (value: string | undefined): [boolean, string | undefined] => {
+        validator: (
+          value: string | undefined
+        ): [boolean, string | undefined] => {
           if (!value) return [false, "Description is required"];
-          if (value.length < 50) return [false, "Description must be at least 50 characters"];
+          if (value.length < 50)
+            return [false, "Description must be at least 50 characters"];
           return [true, undefined];
         },
       },
       screenshots: {
-        validator: (value: File[] | undefined): [boolean, string | undefined] => {        
+        validator: (
+          value: File[] | undefined
+        ): [boolean, string | undefined] => {
           if (value) {
             for (let i = 0; i < value.length; i++) {
               const file = value[i];
               if (!file.type.startsWith("image/")) {
-                return [false, 'All files must be images'];
+                return [false, "All files must be images"];
               }
             }
           }
           return [true, undefined];
-        }
+        },
       },
       videos: {
-        validator: (value: File[] | undefined): [boolean, string | undefined] => {        
+        validator: (
+          value: File[] | undefined
+        ): [boolean, string | undefined] => {
           if (value) {
             for (let i = 0; i < value.length; i++) {
               const file = value[i];
               if (!file.type.startsWith("video/")) {
-                return [false, 'All files must be videos'];
+                return [false, "All files must be videos"];
               }
             }
           }
           return [true, undefined];
-        }
+        },
       },
       logs: {
-        validator: (value: File[] | undefined): [boolean, string | undefined] => {        
+        validator: (
+          value: File[] | undefined
+        ): [boolean, string | undefined] => {
           if (value) {
             for (let i = 0; i < value.length; i++) {
               const file = value[i];
-              if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
-                return [false, 'Files cannot be images or videos'];
+              if (
+                file.type.startsWith("image/") ||
+                file.type.startsWith("video/")
+              ) {
+                return [false, "Files cannot be images or videos"];
               }
             }
           }
           return [true, undefined];
-        }
+        },
       },
     };
-    const defaultFormElements = deepMerge(getFormElements(this.formElement), defaultValidators);
-    const formElements = deepMerge(
-      customElements || {},
-      defaultFormElements
+    const defaultFormElements = deepMerge(
+      getFormElements(this.formElement),
+      defaultValidators
     );
+    const formElements = deepMerge(defaultFormElements, customElements || {});
 
     this.inputs = {
       description: new Input({ ...formElements.description }),
@@ -146,6 +162,12 @@ export class Form {
         ([key, input]) => !input.isDisabled
       )
     );
+
+    if (this.formElement) {
+      this.errorApiMsgElement = this.formElement.querySelector(
+        '[data-bhwf-error-msg="api"]'
+      ) || undefined;
+    }
 
     this._handleButtons();
   }
@@ -174,9 +196,22 @@ export class Form {
         this.reset();
       });
     });
+
+    const tryAgainButtons = this.formElement.querySelectorAll(
+      '[data-bhwf-button="tryAgain"]'
+    );
+    tryAgainButtons.forEach((tryAgainButton: Element) => {
+      (tryAgainButton as HTMLButtonElement).addEventListener("click", (e) => {
+        e.preventDefault();
+        this.formElement?.removeAttribute("data-bhwf-state");
+      });
+    });
   }
 
-  on<K extends keyof EventDataMap>(event: K, callback: (data?: EventDataMap[K]) => void): void {
+  on<K extends keyof EventDataMap>(
+    event: K,
+    callback: (data?: EventDataMap[K]) => void
+  ): void {
     if (!this.eventCallbacks[event]) {
       this.eventCallbacks[event] = [];
     }
@@ -203,7 +238,7 @@ export class Form {
   };
 
   cleanErrors = () => {
-    this.formElement?.removeAttribute("data-bhwf-state")
+    this.formElement?.removeAttribute("data-bhwf-state");
     const allInputs = [
       ...Object.values(this.inputs),
       ...Object.values(this.fileInputs),
@@ -214,21 +249,20 @@ export class Form {
         input.dropzone?.element.classList.remove("bhwf-error");
       }
       if (input.errorMsgElement) {
-        input.errorMsgElement.innerText = '';
+        input.errorMsgElement.innerText = "";
       }
     });
-  }
+    this.emit("cleanErrors");
+  };
 
-  reset() {
+  reset = () => {
+    this.cleanErrors();
     Object.values(this.inputs).map((input) => input.reset());
     Object.values(this.fileInputs).map((input) => input.reset());
-    this.formElement?.removeAttribute("data-bhwf-state");
-  }
+    this.emit("reset");
+  };
 
   async submit() {
-    if (!this.projectId)
-      throw new Error("projectId is required to submit the form");
-
     const inputsData = {
       description: this.inputs.description?.getValue() || undefined,
       stepsToReproduce: this.inputs.stepsToReproduce?.getValue() || undefined,
@@ -246,12 +280,14 @@ export class Form {
       const { id: issueId } = await API.createNewIssue({
         ...inputsData,
         projectId: this.projectId,
+        apiKey: this.apiKey,
       });
 
       if (fileInputsData.screenshots && fileInputsData.screenshots.length > 0) {
         for (const screenshot of fileInputsData.screenshots) {
           await API.uploadScreenshot({
             projectId: this.projectId,
+            apiKey: this.apiKey,
             issueId,
             screenshot,
           });
@@ -262,6 +298,7 @@ export class Form {
         for (const videoClip of fileInputsData.videos) {
           await API.uploadVideoClip({
             projectId: this.projectId,
+            apiKey: this.apiKey,
             issueId,
             videoClip,
           });
@@ -272,6 +309,7 @@ export class Form {
         for (const logFile of fileInputsData.logs) {
           await API.uploadLogFile({
             projectId: this.projectId,
+            apiKey: this.apiKey,
             issueId,
             logFile,
           });
@@ -285,18 +323,21 @@ export class Form {
           if (fileType.startsWith("image/")) {
             await API.uploadScreenshot({
               projectId: this.projectId,
+              apiKey: this.apiKey,
               issueId,
               screenshot: mediaFile,
             });
           } else if (fileType.startsWith("video/")) {
             await API.uploadVideoClip({
               projectId: this.projectId,
+              apiKey: this.apiKey,
               issueId,
               videoClip: mediaFile,
             });
           } else {
             await API.uploadLogFile({
               projectId: this.projectId,
+              apiKey: this.apiKey,
               issueId,
               logFile: mediaFile,
             });
@@ -306,7 +347,7 @@ export class Form {
 
       this.emit("success");
     } catch (error) {
-      const errorResponse = await error as Response;
+      const errorResponse = (await error) as Response;
       const message = (await errorResponse.json()).error;
       const status = errorResponse.status;
       this.emit("apiError", { message, status });

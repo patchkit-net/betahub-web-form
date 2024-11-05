@@ -14,6 +14,7 @@ const ENDPOINT = "https://app.betahub.io";
 
 export const createNewIssue = async ({
   projectId,
+  apiKey,
   title,
   description,
   stepsToReproduce,
@@ -31,7 +32,7 @@ export const createNewIssue = async ({
       headers: {
         Accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: "FormUser anonymous",
+        Authorization: `FormUser ${apiKey}`,
         "BetaHub-Project-ID": projectId,
       },
       body: params.toString(),
@@ -47,6 +48,7 @@ export const createNewIssue = async ({
 
 export const uploadScreenshot = async ({
   projectId,
+  apiKey,
   issueId,
   screenshot,
 }: UploadScreenshotArgs): Promise<UploadScreenshotResponse> => {
@@ -59,7 +61,7 @@ export const uploadScreenshot = async ({
       method: "POST",
       headers: {
         Accept: "application/json",
-        Authorization: "FormUser anonymous",
+        Authorization: `FormUser ${apiKey}`,
         "BetaHub-Project-ID": projectId,
       },
       body: formData,
@@ -75,6 +77,7 @@ export const uploadScreenshot = async ({
 
 export const uploadVideoClip = async ({
   projectId,
+  apiKey,
   issueId,
   videoClip,
 }: UploadVideoClipArgs): Promise<UploadVideoClipResponse> => {
@@ -87,7 +90,7 @@ export const uploadVideoClip = async ({
       method: "POST",
       headers: {
         Accept: "application/json",
-        Authorization: "FormUser anonymous",
+        Authorization: `FormUser ${apiKey}`,
         "BetaHub-Project-ID": projectId,
       },
       body: formData,
@@ -103,6 +106,7 @@ export const uploadVideoClip = async ({
 
 export const uploadLogFile = async ({
   projectId,
+  apiKey,
   issueId,
   logFile,
 }: UploadLogFileArgs): Promise<UploadLogFileResponse> => {
@@ -115,7 +119,7 @@ export const uploadLogFile = async ({
       method: "POST",
       headers: {
         Accept: "application/json",
-        Authorization: "FormUser anonymous",
+        Authorization: `FormUser ${apiKey}`,
         "BetaHub-Project-ID": projectId,
       },
       body: formData,

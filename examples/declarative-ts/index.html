@@ -29,6 +29,9 @@
       textarea {
         font-family: "Assistant", sans-serif;
       }
+      p {
+        margin: 0;
+      }
     </style>
   </head>
   <body>
@@ -53,6 +56,7 @@
 
       <label>Attach Media</label>
       <input id="media-input" class="bhwf-input" type="file" multiple />
+      <span id="media-error-msg" class="bhwf-error-msg"></span>
 
       <button id="submit-button" class="bhwf-button">Submit</button>
 
@@ -66,14 +70,17 @@
         <h2>Something went wrong!</h2>
         <p>Your issue couldn't be sent right now</p>
         <p id="error-text" class="bhwf-error-msg"></p>
+        <br />
         <button id="retry-button" class="bhwf-button">Try again</button>
+        <button id="reset-button" class="bhwf-button">Reset</button>
       </div>
 
       <!-- Success modal -->
       <div id="success-modal" class="bhwf-modal">
         <h2>All done!</h2>
         <p>Thank you for submitting your issue</p>
-        <button id="reset-button" class="bhwf-button">
+        <br />
+        <button id="another-button" class="bhwf-button">
           Submit another issue
         </button>
       </div>

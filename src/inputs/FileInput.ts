@@ -11,10 +11,12 @@ export class FileInput {
   constructor({
     inputElement,
     errorMsgElement,
+    dropzone,
     validator,
   }: {
     inputElement?: HTMLInputElement;
     errorMsgElement?: HTMLElement;
+    dropzone?: Dropzone;
     validator?: (value?: FileList) => [boolean, string | undefined];
   }) {
     this.isDisabled = inputElement === null;
@@ -25,10 +27,11 @@ export class FileInput {
     this.validator = validator;
 
     // Dropzone
+    this.dropzone = dropzone;
     const isDropzone = inputElement?.getAttribute("data-bhwf-dropzone") !== null;
-    if (inputElement && isDropzone) {
-      const dropzone = transformIntoDropzone(inputElement);
-      this.dropzone = dropzone;
+    if (!this.dropzone && inputElement && isDropzone) {
+      const internalDropzone = transformIntoDropzone(inputElement);
+      this.dropzone = internalDropzone;
     }
   }
 

@@ -20,6 +20,8 @@ export interface EventDataMap {
   success: undefined;
   inputError: { message?: string; input: Input | FileInput };
   apiError: { message?: string; status: number };
+  reset: undefined;
+  cleanErrors: undefined;
 };
 
 export type InputName =
@@ -34,6 +36,7 @@ export type FormElements = {
   [key in InputName]: {
     inputElement?: HTMLInputElement | HTMLTextAreaElement;
     errorMsgElement?: HTMLElement;
+    dropzone?: Dropzone;
     validator?: (value: string | File[]) => [boolean, string | undefined];
   };
 };
@@ -51,6 +54,7 @@ export type API = {
 
 export type CreateNewIssueArgs = {
   projectId: string;
+  apiKey: string;
   title?: string;
   description: string;
   stepsToReproduce?: string;
@@ -80,6 +84,7 @@ export type CreateNewIssueResponse = {
 
 export type UploadScreenshotArgs = {
   projectId: string;
+  apiKey: string;
   issueId: number;
   screenshot: Blob;
 };
@@ -96,6 +101,7 @@ export type UploadScreenshotResponse = {
 
 export type UploadVideoClipArgs = {
   projectId: string;
+  apiKey: string;
   issueId: number;
   videoClip: Blob;
 };
@@ -112,6 +118,7 @@ export type UploadVideoClipResponse = {
 
 export type UploadLogFileArgs = {
   projectId: string;
+  apiKey: string;
   issueId: number;
   logFile: Blob;
 };

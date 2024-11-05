@@ -40,11 +40,18 @@
       textarea {
         font-family: "Assistant", sans-serif;
       }
+      p {
+        margin: 0;
+      }
     </style>
   </head>
   <body>
     <!-- Example 1 - dark theme, universal media input -->
-    <form data-bhwf-form="pr-3251306887">
+    <form
+      data-bhwf-form
+      data-bhwf-project-id="pr-3251306887-----------"
+      data-bhwf-api-key="tkn-6ed1b7c8928bbfb155f1e5d36d3def0d3f91a61d49992adc39c35fdde8c72675"
+    >
       <h1>Example 1</h1>
 
       <label>Issue Description</label>
@@ -72,18 +79,27 @@
       <div data-bhwf-modal="error">
         <h2>Something went wrong!</h2>
         <p>Your issue couldn't be sent right now</p>
-        <button data-bhwf-button="submit">Try again</button>
+        <span data-bhwf-error-msg="api"></span>
+        <br />
+        <button data-bhwf-button="tryAgain">Try again</button>
+        <button data-bhwf-button="reset">Reset</button>
       </div>
 
       <div data-bhwf-modal="success">
         <h2>All done!</h2>
         <p>Thank you for submitting your issue</p>
+        <br />
         <button data-bhwf-button="reset">Submit another issue</button>
       </div>
     </form>
 
     <!-- Example 2 - light theme, splitted media inputs -->
-    <form class="light" data-bhwf-form="pr-3251306887">
+    <form
+      class="light"
+      data-bhwf-form
+      data-bhwf-project-id="pr-3251306887"
+      data-bhwf-api-key="tkn-6ed1b7c8928bbfb155f1e5d36d3def0d3f91a61d49992adc39c35fdde8c72675"
+    >
       <h1>Example 2</h1>
 
       <label>Issue Description</label>

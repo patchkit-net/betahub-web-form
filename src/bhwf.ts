@@ -2,6 +2,7 @@ import { Form } from "./Form";
 import * as API from "./api";
 import { BHWFI } from "./types";
 import { autoInit } from "./functions";
+import Dropzone from "dropzone";
 
 const BHWF: BHWFI = {
   Form,
@@ -17,4 +18,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 export * from "./types";
 export * from "./functions";
+export { Dropzone };
 export default BHWF;

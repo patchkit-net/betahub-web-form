@@ -1,7 +1,8 @@
+import BHWF, { transformIntoDropzone } from "betahub-web-form";
 import "betahub-web-form/dist/bhwf.min.css";
 import "betahub-web-form/dist/dropzone.min.css";
-import BHWF, { transformIntoDropzone } from "betahub-web-form";
 
+const formElement = document.getElementById("form") as HTMLElement;
 const descriptionInputElement = document.getElementById(
   "description-input"
 ) as HTMLInputElement;
@@ -16,6 +17,9 @@ const stepsToReproduceErrorMsgElement = document.getElementById(
 ) as HTMLInputElement;
 const mediaInputElement = document.getElementById(
   "media-input"
+) as HTMLInputElement;
+const mediaErrorMsgElement = document.getElementById(
+  "media-error-msg"
 ) as HTMLInputElement;
 
 const loadingModalElement = document.getElementById(
@@ -40,11 +44,17 @@ const resetButtonElement = document.getElementById(
 const retryButtonElement = document.getElementById(
   "retry-button"
 ) as HTMLButtonElement;
+const anotherButtonElement = document.getElementById(
+  "another-button"
+) as HTMLButtonElement;
 
-transformIntoDropzone(mediaInputElement);
+const dropzone = transformIntoDropzone(mediaInputElement);
 
 const form = new BHWF.Form({
   projectId: "pr-3251306887", // Set your project ID here
+  apiKey:
+    "tkn-6ed1b7c8928bbfb155f1e5d36d3def0d3f91a61d49992adc39c35fdde8c72675", // Set your API key here
+  formElement,
   customElements: {
     description: {
       inputElement: descriptionInputElement,
@@ -60,6 +70,12 @@ const form = new BHWF.Form({
     },
     media: {
       inputElement: mediaInputElement,
+      errorMsgElement: mediaErrorMsgElement,
+      dropzone: dropzone,
+      validator: (value) => {
+        if (value.length === 0) return [false, "Media are required"];
+        return [true, undefined];
+      },
     },
   },
 });
@@ -72,9 +88,14 @@ form.on("apiError", (data) => {
   errorModalElement.classList.add("bhwf-modal-show");
   console.log(data);
   if (data?.status !== undefined) {
-    if (data.status === 404) data.message = "Project not found";
     errorTextElement.innerText = data?.message || "";
   }
+});
+form.on("inputError", () => {
+  submitButtonElement.setAttribute("disabled", "true");
+});
+form.on("cleanErrors", () => {
+  submitButtonElement.removeAttribute("disabled");
 });
 form.on("success", () => {
   loadingModalElement.classList.remove("bhwf-modal-show");
@@ -90,13 +111,17 @@ submitButtonElement.addEventListener("click", (e) => {
 
 resetButtonElement.addEventListener("click", (e) => {
   e.preventDefault();
+  errorModalElement.classList.remove("bhwf-modal-show");
+  form.reset();
+});
+
+anotherButtonElement.addEventListener("click", (e) => {
+  e.preventDefault();
   successModalElement.classList.remove("bhwf-modal-show");
   form.reset();
 });
 
 retryButtonElement.addEventListener("click", (e) => {
   e.preventDefault();
-  if (form.validate()) {
-    form.submit();
-  }
+  errorModalElement.classList.remove("bhwf-modal-show");
 });

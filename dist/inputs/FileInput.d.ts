@@ -5,9 +5,10 @@ export declare class FileInput {
     errorMsgElement?: HTMLElement;
     dropzone?: Dropzone;
     validator?: (value?: FileList) => [boolean, string | undefined];
-    constructor({ inputElement, errorMsgElement, validator, }: {
+    constructor({ inputElement, errorMsgElement, dropzone, validator, }: {
         inputElement?: HTMLInputElement;
         errorMsgElement?: HTMLElement;
+        dropzone?: Dropzone;
         validator?: (value?: FileList) => [boolean, string | undefined];
     });
     validate: () => [boolean, string | undefined];

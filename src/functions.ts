@@ -16,11 +16,15 @@ export const autoInit = (BHWF: BHWFI) => {
     "[data-bhwf-form]"
   ) as NodeListOf<HTMLElement>;
   formElements.forEach((formElement) => {
-    const projectId = formElement.getAttribute("data-bhwf-form");
-    if (!projectId) {
-      throw new Error("Project ID for data-bhwf-form is required");
+    const projectId = formElement.getAttribute("data-bhwf-project-id") || undefined;
+    const apiKey = formElement.getAttribute("data-bhwf-api-key") || undefined;
+    if (projectId === undefined) {
+      throw new Error("data-bhwf-project-id is required");
     }
-    const bhwfForm = new BHWF.Form({ formElement });
+    if (apiKey === undefined) {
+      throw new Error("data-bhwf-api-key is required");
+    }
+    const bhwfForm = new BHWF.Form({ projectId, apiKey, formElement });
     BHWF.forms[projectId] = bhwfForm;
   });
 };
