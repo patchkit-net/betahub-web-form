@@ -77,29 +77,35 @@
 
   transition: border-color var(--bhwf-transition);
 }
-.bhwf-input::-webkit-scrollbar {
+.bhwf-input::-webkit-scrollbar,
+[data-bhwf-input]::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
-.bhwf-input::-webkit-scrollbar-track {
+.bhwf-input::-webkit-scrollbar-track,
+[data-bhwf-input]::-webkit-scrollbar-track {
   background: var(--bhwf-form-bg-color);
   border-radius: 10px;
 }
 
-.bhwf-input::-webkit-scrollbar-thumb {
+.bhwf-input::-webkit-scrollbar-thumb,
+[data-bhwf-input]::-webkit-scrollbar-thumb {
   cursor: default;
   background: var(--bhwf-input-border-color);
   border-radius: 10px;
 }
 
-.bhwf-input::-webkit-scrollbar-corner {
+.bhwf-input::-webkit-scrollbar-thumb:hover,
+[data-bhwf-input]::-webkit-scrollbar-thumb:hover {
+  background: var(--bhwf-input-border-color-focus);
+}
+
+.bhwf-input::-webkit-scrollbar-corner,
+[data-bhwf-input]::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-.bhwf-input::-webkit-scrollbar-thumb:hover {
-  background: var(--bhwf-input-border-color-focus);
-}
 textarea.bhwf-input,
 textarea[data-bhwf-input] {
   min-height: 3rem;
