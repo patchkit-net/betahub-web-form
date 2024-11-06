@@ -12,123 +12,146 @@ import {
 // const ENDPOINT = 'http://localhost';
 const ENDPOINT = "https://app.betahub.io";
 
-export const createNewIssue = async ({
+export const createNewIssue = ({
   projectId,
   apiKey,
   title,
   description,
   stepsToReproduce,
 }: CreateNewIssueArgs): Promise<CreateNewIssueResponse> => {
-  const params = new URLSearchParams();
-  if (title) params.append("issue[title]", title);
-  params.append("issue[description]", description);
-  if (stepsToReproduce)
-    params.append("issue[unformatted_steps_to_reproduce]", stepsToReproduce);
+  return new Promise((resolve, reject) => {
+    const params = new URLSearchParams();
+    if (title) params.append("issue[title]", title);
+    params.append("issue[description]", description);
+    if (stepsToReproduce)
+      params.append("issue[unformatted_steps_to_reproduce]", stepsToReproduce);
 
-  const response = await fetch(
-    `${ENDPOINT}/projects/${projectId}/issues.json`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `FormUser ${apiKey}`,
-        "BetaHub-Project-ID": projectId,
-      },
-      body: params.toString(),
-    }
-  );
+    const xhr = new XMLHttpRequest();
 
-  if (!response.ok) {
-    throw response;
-  }
+    xhr.open("POST", `${ENDPOINT}/projects/${projectId}/issues.json`, true);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("Authorization", `FormUser ${apiKey}`);
+    xhr.setRequestHeader("BetaHub-Project-ID", projectId);
 
-  return response.json();
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText));
+      } else {
+        reject(xhr);
+      }
+    };
+
+    xhr.onerror = () => reject(xhr);
+
+    xhr.send(params.toString());
+  });
 };
 
-export const uploadScreenshot = async ({
+export const uploadScreenshot = ({
   projectId,
   apiKey,
   issueId,
   screenshot,
-}: UploadScreenshotArgs): Promise<UploadScreenshotResponse> => {
-  const formData = new FormData();
-  formData.append("screenshot[image]", screenshot);
+  onProgress,
+}: UploadScreenshotArgs & { onProgress?: (event: ProgressEvent) => void }): Promise<UploadScreenshotResponse> => {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append("screenshot[image]", screenshot);
 
-  const response = await fetch(
-    `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/screenshots`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        Authorization: `FormUser ${apiKey}`,
-        "BetaHub-Project-ID": projectId,
-      },
-      body: formData,
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST", `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/screenshots`, true);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Authorization", `FormUser ${apiKey}`);
+    xhr.setRequestHeader("BetaHub-Project-ID", projectId);
+
+    if (onProgress) {
+      xhr.upload.onprogress = onProgress;
     }
-  );
 
-  if (!response.ok) {
-    throw response;
-  }
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText));
+      } else {
+        reject(xhr);
+      }
+    };
 
-  return response.json();
+    xhr.onerror = () => reject(xhr);
+
+    xhr.send(formData);
+  });
 };
 
-export const uploadVideoClip = async ({
+export const uploadVideoClip = ({
   projectId,
   apiKey,
   issueId,
   videoClip,
-}: UploadVideoClipArgs): Promise<UploadVideoClipResponse> => {
-  const formData = new FormData();
-  formData.append("video_clip[video]", videoClip);
+  onProgress,
+}: UploadVideoClipArgs & { onProgress?: (event: ProgressEvent) => void }): Promise<UploadVideoClipResponse> => {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append("video_clip[video]", videoClip);
 
-  const response = await fetch(
-    `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/video_clips`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        Authorization: `FormUser ${apiKey}`,
-        "BetaHub-Project-ID": projectId,
-      },
-      body: formData,
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST", `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/video_clips`, true);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Authorization", `FormUser ${apiKey}`);
+    xhr.setRequestHeader("BetaHub-Project-ID", projectId);
+
+    if (onProgress) {
+      xhr.upload.onprogress = onProgress;
     }
-  );
 
-  if (!response.ok) {
-    throw response;
-  }
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText));
+      } else {
+        reject(xhr);
+      }
+    };
 
-  return response.json();
+    xhr.onerror = () => reject(xhr);
+
+    xhr.send(formData);
+  });
 };
 
-export const uploadLogFile = async ({
+export const uploadLogFile = ({
   projectId,
   apiKey,
   issueId,
   logFile,
-}: UploadLogFileArgs): Promise<UploadLogFileResponse> => {
-  const formData = new FormData();
-  formData.append("log_file[file]", logFile);
+  onProgress,
+}: UploadLogFileArgs & { onProgress?: (event: ProgressEvent) => void }): Promise<UploadLogFileResponse> => {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append("log_file[file]", logFile);
 
-  const response = await fetch(
-    `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/log_files`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        Authorization: `FormUser ${apiKey}`,
-        "BetaHub-Project-ID": projectId,
-      },
-      body: formData,
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST", `${ENDPOINT}/projects/${projectId}/issues/g-${issueId}/log_files`, true);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Authorization", `FormUser ${apiKey}`);
+    xhr.setRequestHeader("BetaHub-Project-ID", projectId);
+
+    if (onProgress) {
+      xhr.upload.onprogress = onProgress;
     }
-  );
 
-  if (!response.ok) {
-    throw response;
-  }
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText));
+      } else {
+        reject(xhr);
+      }
+    };
 
-  return response.json();
+    xhr.onerror = () => reject(xhr);
+
+    xhr.send(formData);
+  });
 };

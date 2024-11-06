@@ -43,6 +43,9 @@
       p {
         margin: 0;
       }
+      [data-bhwf-progress] {
+        font-size: 22px;
+      }
     </style>
   </head>
   <body>
@@ -74,6 +77,9 @@
 
       <div data-bhwf-modal="loading">
         <div class="bhwf-loader"></div>
+        <br />
+        <span data-bhwf-progress></span>
+        <span data-bhwf-progress-msg></span>
       </div>
 
       <div data-bhwf-modal="error">
@@ -143,18 +149,24 @@
 
       <div data-bhwf-modal="loading">
         <div class="bhwf-loader"></div>
+        <br />
+        <span data-bhwf-progress></span>
+        <span data-bhwf-progress-msg></span>
       </div>
 
       <div data-bhwf-modal="error">
         <h2>Something went wrong!</h2>
         <p>Your issue couldn't be sent right now</p>
-        <button data-bhwf-button="submit">Try again</button>
+        <span data-bhwf-error-msg="api"></span>
+        <br />
+        <button data-bhwf-button="tryAgain">Try again</button>
         <button data-bhwf-button="reset">Reset</button>
       </div>
 
       <div data-bhwf-modal="success">
         <h2>All done!</h2>
         <p>Thank you for submitting your issue</p>
+        <br />
         <button data-bhwf-button="reset">Submit another issue</button>
       </div>
     </form>

@@ -13,6 +13,8 @@ export declare class Form {
     }>;
     private eventCallbacks;
     errorApiMsgElement?: HTMLElement;
+    progressElement?: HTMLElement;
+    progressMsgElement?: HTMLElement;
     constructor({ formElement, projectId, apiKey, customElements, }: {
         formElement?: HTMLElement | HTMLFormElement;
         projectId?: string;

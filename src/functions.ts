@@ -73,6 +73,7 @@ export const transformIntoDropzone = (inputElement: HTMLInputElement) => {
     autoProcessQueue: false,
     addRemoveLinks: true,
     acceptedFiles,
+    maxFilesize: 1000,
   });
 
   const _syncFileInputFiles = () => {

@@ -19,10 +19,12 @@ export const WebForm = ({
   const errorModalRef = useRef<HTMLDivElement>(null);
   const successModalRef = useRef<HTMLDivElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
+  const progressRef = useRef<HTMLSpanElement>(null);
+  const progressMsgRef = useRef<HTMLSpanElement>(null);
   const [mediaInputDropzone, setMediaInputDropzone] = useState<Dropzone | null>(
     null
   );
-  const [apiErrorMsg, setApiErrorMsg] = useState<string>('');
+  const [apiErrorMsg, setApiErrorMsg] = useState<string>("");
 
   const [areAllInputsLoaded, setAreAllInputsLoaded] = useState(false);
   const [areFileInputsTransformed, setAreFileInputsTransformed] =
@@ -41,7 +43,9 @@ export const WebForm = ({
       loadingModalRef.current &&
       errorModalRef.current &&
       successModalRef.current &&
-      submitButtonRef.current
+      submitButtonRef.current &&
+      progressRef.current &&
+      progressMsgRef.current
     ) {
       setAreAllInputsLoaded(true);
     }
@@ -57,6 +61,8 @@ export const WebForm = ({
     errorModalRef.current,
     successModalRef.current,
     submitButtonRef.current,
+    progressRef.current,
+    progressMsgRef.current,
   ]);
 
   // Transform file inputs into dropzones
@@ -123,10 +129,18 @@ export const WebForm = ({
       form.on("loading", () => {
         loadingModalRef.current?.classList.add("bhwf-modal-show");
       });
+      form.on("progress", (data) => {
+        if (progressRef?.current) {
+          progressRef.current.innerText = data?.progress !== undefined ? `${Math.round(data.progress)}%` : "";
+        }
+        if (progressMsgRef?.current) {
+          progressMsgRef.current.innerText = data?.message || "";
+        }
+      });
       form.on("apiError", (data) => {
         loadingModalRef.current?.classList.remove("bhwf-modal-show");
         errorModalRef.current?.classList.add("bhwf-modal-show");
-        setApiErrorMsg(data?.message || '');
+        setApiErrorMsg(data?.message || "");
       });
       form.on("success", () => {
         loadingModalRef.current?.classList.remove("bhwf-modal-show");
@@ -149,14 +163,13 @@ export const WebForm = ({
   const handleRetry = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     errorModalRef.current?.classList.remove("bhwf-modal-show");
-  }
+  };
 
   const handleReset = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     errorModalRef.current?.classList.remove("bhwf-modal-show");
     form?.reset();
   };
-  
 
   return (
     <form
@@ -196,6 +209,9 @@ export const WebForm = ({
 
       <div ref={loadingModalRef} className="bhwf-modal">
         <div className="bhwf-loader"></div>
+        <br />
+        <span ref={progressRef} style={{ fontSize: "22px" }}></span>
+        <span ref={progressMsgRef}></span>
       </div>
 
       <div ref={errorModalRef} className="bhwf-modal">

@@ -20,6 +20,7 @@ export interface EventDataMap {
   success: undefined;
   inputError: { message?: string; input: Input | FileInput };
   apiError: { message?: string; status: number };
+  progress: { progress?: number; message?: string };
   reset: undefined;
   cleanErrors: undefined;
 };

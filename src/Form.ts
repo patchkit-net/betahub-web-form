@@ -20,6 +20,8 @@ export class Form {
     [key in EventType]?: Array<(data?: EventDataMap[key]) => void>;
   } = {};
   errorApiMsgElement?: HTMLElement;
+  progressElement?: HTMLElement;
+  progressMsgElement?: HTMLElement;
 
   constructor({
     formElement,
@@ -55,6 +57,7 @@ export class Form {
       }
     });
     this.on("apiError", (data) => {
+      console.log("apiError", data);
       this.formElement?.setAttribute("data-bhwf-state", "apiError");
       if (this.errorApiMsgElement) {
         this.errorApiMsgElement.innerText = data?.message || "";
@@ -62,6 +65,15 @@ export class Form {
     });
     this.on("loading", () => {
       this.formElement?.setAttribute("data-bhwf-state", "loading");
+    });
+    this.on("progress", (data) => {
+      if (this.progressElement) {
+        this.progressElement.innerText =
+          data?.progress !== undefined ? Math.round(data.progress) + "%" : "";
+      }
+      if (this.progressMsgElement) {
+        this.progressMsgElement.innerText = data?.message || "";
+      }
     });
     this.on("success", () => {
       this.formElement?.setAttribute("data-bhwf-state", "success");
@@ -164,9 +176,15 @@ export class Form {
     );
 
     if (this.formElement) {
-      this.errorApiMsgElement = this.formElement.querySelector(
-        '[data-bhwf-error-msg="api"]'
-      ) || undefined;
+      this.errorApiMsgElement =
+        this.formElement.querySelector('[data-bhwf-error-msg="api"]') ||
+        undefined;
+
+      this.progressElement =
+        this.formElement.querySelector("[data-bhwf-progress]") || undefined;
+
+      this.progressMsgElement =
+        this.formElement.querySelector("[data-bhwf-progress-msg]") || undefined;
     }
 
     this._handleButtons();
@@ -263,94 +281,104 @@ export class Form {
   };
 
   async submit() {
-    const inputsData = {
+    const inputsData: CreateNewIssueArgs = {
       description: this.inputs.description?.getValue() || undefined,
       stepsToReproduce: this.inputs.stepsToReproduce?.getValue() || undefined,
     } as CreateNewIssueArgs;
 
     const fileInputsData = {
-      screenshots: this.fileInputs.screenshots?.getValue() || undefined,
-      videos: this.fileInputs.videos?.getValue() || undefined,
-      logs: this.fileInputs.logs?.getValue() || undefined,
-      media: this.fileInputs.media?.getValue() || undefined,
+      screenshots: this.fileInputs.screenshots?.getValue() || [],
+      videos: this.fileInputs.videos?.getValue() || [],
+      logs: this.fileInputs.logs?.getValue() || [],
+      media: this.fileInputs.media?.getValue() || [],
     };
 
+    const allFiles = [
+      ...Array.from(fileInputsData.screenshots),
+      ...Array.from(fileInputsData.videos),
+      ...Array.from(fileInputsData.logs),
+      ...Array.from(fileInputsData.media),
+    ];
+
+    const totalFiles: number = allFiles.length;
+    let uploadedFiles: number = 0;
+
+    const totalFileSize: number = allFiles.reduce(
+      (acc, file) => acc + (file.size || 0),
+      0
+    );
+    let uploadedFileSize: number = 0;
+
     this.emit("loading");
-    try {
-      const { id: issueId } = await API.createNewIssue({
-        ...inputsData,
+    this.emit("progress", { message: "Creating issue" });
+
+    const { id: issueId } = await API.createNewIssue({
+      ...inputsData,
+      projectId: this.projectId,
+      apiKey: this.apiKey,
+    }).catch((errorRequest) => {
+      const message = JSON.parse(errorRequest.response).error;
+      const status = errorRequest.status;
+      this.emit("apiError", { message, status });
+      throw errorRequest;
+    });
+
+    const uploadFile = async (
+      uploadFunction: Function,
+      file: { screenshot?: File; videoClip?: File; logFile?: File }
+    ): Promise<void> => {
+      let previousLoaded = 0;
+      await uploadFunction({
         projectId: this.projectId,
         apiKey: this.apiKey,
-      });
+        issueId,
+        ...file,
+        onProgress: (event: ProgressEvent) => {
+          if (event.lengthComputable) {
+            const loaded = event.loaded - previousLoaded;
+            previousLoaded = event.loaded;
+            uploadedFileSize += loaded;
 
-      if (fileInputsData.screenshots && fileInputsData.screenshots.length > 0) {
-        for (const screenshot of fileInputsData.screenshots) {
-          await API.uploadScreenshot({
-            projectId: this.projectId,
-            apiKey: this.apiKey,
-            issueId,
-            screenshot,
-          });
-        }
-      }
-
-      if (fileInputsData.videos && fileInputsData.videos.length > 0) {
-        for (const videoClip of fileInputsData.videos) {
-          await API.uploadVideoClip({
-            projectId: this.projectId,
-            apiKey: this.apiKey,
-            issueId,
-            videoClip,
-          });
-        }
-      }
-
-      if (fileInputsData.logs && fileInputsData.logs.length > 0) {
-        for (const logFile of fileInputsData.logs) {
-          await API.uploadLogFile({
-            projectId: this.projectId,
-            apiKey: this.apiKey,
-            issueId,
-            logFile,
-          });
-        }
-      }
-
-      if (fileInputsData.media && fileInputsData.media.length > 0) {
-        for (const mediaFile of fileInputsData.media) {
-          const fileType = mediaFile.type;
-
-          if (fileType.startsWith("image/")) {
-            await API.uploadScreenshot({
-              projectId: this.projectId,
-              apiKey: this.apiKey,
-              issueId,
-              screenshot: mediaFile,
-            });
-          } else if (fileType.startsWith("video/")) {
-            await API.uploadVideoClip({
-              projectId: this.projectId,
-              apiKey: this.apiKey,
-              issueId,
-              videoClip: mediaFile,
-            });
-          } else {
-            await API.uploadLogFile({
-              projectId: this.projectId,
-              apiKey: this.apiKey,
-              issueId,
-              logFile: mediaFile,
+            const progress = (uploadedFileSize / totalFileSize) * 100;
+            this.emit("progress", {
+              progress: progress > 100 ? 100 : progress,
+              message: `Uploading files: ${uploadedFiles + 1}/${totalFiles}`,
             });
           }
-        }
-      }
+        },
+      })
+        .then(() => {
+          uploadedFiles += 1;
+        })
+        .catch((errorRequest: XMLHttpRequest) => {
+          const message = JSON.parse(errorRequest.response).error;
+          const status = errorRequest.status;
+          this.emit("apiError", { message, status });
+          throw errorRequest;
+        });
+    };
 
-      this.emit("success");
-    } catch (error) {
-      const errorResponse = (await error) as Response;
-      const message = (await errorResponse.json()).error;
-      const status = errorResponse.status;
-      this.emit("apiError", { message, status });
+    for (const screenshot of fileInputsData.screenshots) {
+      await uploadFile(API.uploadScreenshot, { screenshot });
     }
+    for (const videoClip of fileInputsData.videos) {
+      await uploadFile(API.uploadVideoClip, { videoClip });
+    }
+    for (const logFile of fileInputsData.logs) {
+      await uploadFile(API.uploadLogFile, { logFile });
+    }
+
+    for (const mediaFile of fileInputsData.media) {
+      const fileType: string = mediaFile.type;
+      if (fileType.startsWith("image/")) {
+        await uploadFile(API.uploadScreenshot, { screenshot: mediaFile });
+      } else if (fileType.startsWith("video/")) {
+        await uploadFile(API.uploadVideoClip, { videoClip: mediaFile });
+      } else {
+        await uploadFile(API.uploadLogFile, { logFile: mediaFile });
+      }
+    }
+
+    this.emit("success");
   }
 }

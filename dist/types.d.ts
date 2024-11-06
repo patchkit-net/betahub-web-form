@@ -26,6 +26,10 @@ export interface EventDataMap {
         message?: string;
         status: number;
     };
+    progress: {
+        progress?: number;
+        message?: string;
+    };
     reset: undefined;
     cleanErrors: undefined;
 }

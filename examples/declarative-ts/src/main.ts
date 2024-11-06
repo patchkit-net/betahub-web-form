@@ -48,6 +48,9 @@ const anotherButtonElement = document.getElementById(
   "another-button"
 ) as HTMLButtonElement;
 
+const progressElement = document.getElementById("progress") as HTMLSpanElement;
+const progressMsgElement = document.getElementById("progress-msg") as HTMLSpanElement;
+
 const dropzone = transformIntoDropzone(mediaInputElement);
 
 const form = new BHWF.Form({
@@ -82,6 +85,10 @@ const form = new BHWF.Form({
 
 form.on("loading", () => {
   loadingModalElement.classList.add("bhwf-modal-show");
+});
+form.on("progress", (data) => {
+  progressElement.innerText = data?.progress !== undefined ? `${Math.round(data.progress)}%` : "";
+  progressMsgElement.innerText = data?.message || "";
 });
 form.on("apiError", (data) => {
   loadingModalElement.classList.remove("bhwf-modal-show");
