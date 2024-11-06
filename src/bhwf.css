@@ -78,8 +78,8 @@
   transition: border-color var(--bhwf-transition);
 }
 .bhwf-input::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 .bhwf-input::-webkit-scrollbar-track {
@@ -88,8 +88,13 @@
 }
 
 .bhwf-input::-webkit-scrollbar-thumb {
+  cursor: default;
   background: var(--bhwf-input-border-color);
   border-radius: 10px;
+}
+
+.bhwf-input::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .bhwf-input::-webkit-scrollbar-thumb:hover {
