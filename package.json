@@ -1,6 +1,6 @@
 {
   "name": "betahub-web-form",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "source": "src/bhwf.ts",
   "main": "dist/bhwf.js",
   "module": "dist/bhwf.esm.js",

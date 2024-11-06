@@ -77,6 +77,24 @@
 
   transition: border-color var(--bhwf-transition);
 }
+.bhwf-input::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.bhwf-input::-webkit-scrollbar-track {
+  background: var(--bhwf-form-bg-color);
+  border-radius: 10px;
+}
+
+.bhwf-input::-webkit-scrollbar-thumb {
+  background: var(--bhwf-input-border-color);
+  border-radius: 10px;
+}
+
+.bhwf-input::-webkit-scrollbar-thumb:hover {
+  background: var(--bhwf-input-border-color-focus);
+}
 textarea.bhwf-input,
 textarea[data-bhwf-input] {
   min-height: 3rem;
