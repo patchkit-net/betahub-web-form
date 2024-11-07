@@ -22,6 +22,7 @@ export class Form {
   errorApiMsgElement?: HTMLElement;
   progressElement?: HTMLElement;
   progressMsgElement?: HTMLElement;
+  latestIssueUrl?: string;
 
   constructor({
     formElement,
@@ -75,8 +76,18 @@ export class Form {
         this.progressMsgElement.innerText = data?.message || "";
       }
     });
-    this.on("success", () => {
+    this.on("success", (data) => {
       this.formElement?.setAttribute("data-bhwf-state", "success");
+
+      const viewIssueButtons =
+        this.formElement?.querySelectorAll('[data-bhwf-button="viewIssue"]') ||
+        [];
+      viewIssueButtons.forEach((viewIssueButton: Element) => {
+        (viewIssueButton as HTMLAnchorElement).setAttribute(
+          "href",
+          data?.issueUrl || ""
+        );
+      });
     });
 
     this.formElement?.addEventListener("input", this.cleanErrors);
@@ -312,7 +323,7 @@ export class Form {
     this.emit("loading");
     this.emit("progress", { message: "Creating issue" });
 
-    const { id: issueId } = await API.createNewIssue({
+    const { id: issueId, url: issueUrl } = await API.createNewIssue({
       ...inputsData,
       projectId: this.projectId,
       apiKey: this.apiKey,
@@ -379,6 +390,6 @@ export class Form {
       }
     }
 
-    this.emit("success");
+    this.emit("success", { issueId, issueUrl });
   }
 }

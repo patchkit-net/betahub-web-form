@@ -15,6 +15,7 @@ export declare class Form {
     errorApiMsgElement?: HTMLElement;
     progressElement?: HTMLElement;
     progressMsgElement?: HTMLElement;
+    latestIssueUrl?: string;
     constructor({ formElement, projectId, apiKey, customElements, }: {
         formElement?: HTMLElement | HTMLFormElement;
         projectId?: string;

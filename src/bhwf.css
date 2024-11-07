@@ -141,6 +141,10 @@ textarea[data-bhwf-input] {
   background-color: var(--bhwf-button-bg-color);
   color: var(--bhwf-button-text-color);
 
+  font-size: 14px;
+  font-family: inherit;
+  text-decoration: none;
+
   transition: background-color var(--bhwf-transition), transform var(--bhwf-transition), opacity var(--bhwf-transition);
 }
 .bhwf-button:hover,

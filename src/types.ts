@@ -17,7 +17,7 @@ declare global {
 export type EventType = keyof EventDataMap;
 export interface EventDataMap {
   loading: undefined;
-  success: undefined;
+  success: { issueId?: number, issueUrl?: string };
   inputError: { message?: string; input: Input | FileInput };
   apiError: { message?: string; status: number };
   progress: { progress?: number; message?: string };
