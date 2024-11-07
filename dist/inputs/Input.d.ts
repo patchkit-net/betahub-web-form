@@ -2,6 +2,7 @@ export declare class Input {
     isDisabled: boolean;
     inputElement?: HTMLInputElement;
     errorMsgElement?: HTMLElement;
+    charCounter?: HTMLElement;
     validator?: ((value: string) => [boolean, string | undefined]);
     constructor({ inputElement, errorMsgElement, validator, }: {
         inputElement?: HTMLInputElement;
